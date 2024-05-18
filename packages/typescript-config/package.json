@@ -1,0 +1,13 @@
+{
+  "name": "@repo/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "resolutions": {
+  "@babel/core": "^7.20.2",
+  "babel-loader": "8.3.0"
+}
+}
