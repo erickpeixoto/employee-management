@@ -1,23 +1,44 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDotEnv": [".env"],
   "pipeline": {
     "build": {
-      "dependsOn": ["^build","^db:generate"],
+      "dependsOn": ["^build", "^db:generate"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
     },
     "dev": {
-      "dependsOn": ["^db:generate"],
+      "dependsOn": ["^db:generate", "^db:push"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dotEnv": [".env.development.local", ".env.local", ".env.development", ".env"]
     },
     "db:generate": {
       "cache": false
     },
+    "db:migrate": {
+      "cache": false,
+      "dotEnv": [".env"]
+    },
     "db:push": {
+      "cache": false
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "dotEnv": [".env.test.local", ".env.test", ".env"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "dotEnv": [".env.test.local", ".env.test", ".env"],
+      "outputs": ["coverage/**"],
+      "cache": false
+    },
+    "test:cov": {
+      "dependsOn": ["^test"],
+      "dotEnv": [".env.test", ".env"],
+      "outputs": ["coverage/**"],
       "cache": false
     }
   }
