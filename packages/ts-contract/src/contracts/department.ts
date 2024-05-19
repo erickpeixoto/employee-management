@@ -5,6 +5,8 @@ export const departmentSchema = z.object({
   name: z.string(),
 });
 
+export type Department = z.infer<typeof departmentSchema>;
+
 export const departmentMethods = {
   getAll: {
     method: "GET",

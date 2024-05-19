@@ -11,9 +11,11 @@
     "dev": "tsc -w"
   },
   "dependencies": {
+    "@anatine/zod-openapi": "^2.2.5",
+    "@nestjs/mapped-types": "*",
+    "@repo/typescript-config": "*",
     "@ts-rest/core": "^3.45.2",
     "typescript": "latest",
-    "zod": "^3.23.8",
-    "@repo/typescript-config": "*"
+    "zod": "^3.23.8"
   }
 }

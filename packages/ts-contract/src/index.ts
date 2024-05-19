@@ -1,7 +1,8 @@
-import { employeeMethods, departmentMethods } from "@/contracts";
+import { employeeMethods, departmentMethods } from "./contracts";
 import { initContract } from "@ts-rest/core";
 import { initQueryClient } from "@ts-rest/react-query";
 import { initClient } from "@ts-rest/core";
+export * from "@ts-rest/nest";
 
 const c = initContract();
 
