@@ -11,7 +11,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "test": "turbo test",
     "test:e2e": "dotenv -e .env.test -- turbo run test:e2e",
-    "test:cov": "turbo test"
+    "test:cov": "turbo test",
+    "studio": "turbo studio"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

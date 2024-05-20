@@ -39,6 +39,9 @@
       "dotEnv": [".env.test", ".env"],
       "outputs": ["coverage/**"],
       "cache": false
+    },
+    "studio": {
+      "cache": false
     }
   }
 }
