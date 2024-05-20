@@ -59,6 +59,24 @@ export const employeeMethods = {
       }),
     },
   },
+  getOne: {
+    method: "GET",
+    path: "/employees/GetEmployeeById",
+    query: z.object({
+      id: z.number().openapi({ description: 'Employee ID', example: 1 }),
+    }),
+    responses: {
+      200: employeeSchema.openapi({
+        description: "Employee found",
+      }),
+      400: errorResponseSchema.openapi({ description: "Bad request" }),
+      404: errorResponseSchema.openapi({ description: "Employee not found" }),
+      500: errorResponseSchema.openapi({
+        description: "Internal server error",
+      }),
+    },
+
+  },
   create: {
     method: "POST",
     path: "/employees/CreateEmployee",
