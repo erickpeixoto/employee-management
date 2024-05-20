@@ -16,7 +16,7 @@ describe('EmployeeController (e2e)', () => {
     name: 'Engineering',
   };
 
-  const sampleEmployee = {
+  const shapeEmployee = {
     id: 1,
     firstName: 'John',
     lastName: 'Doe',
@@ -42,10 +42,7 @@ describe('EmployeeController (e2e)', () => {
     });
 
     await prisma.employee.create({
-      data: {
-        ...sampleEmployee,
-        hireDate: new Date(sampleEmployee.hireDate),
-      },
+      data: shapeEmployee,
     });
 
     await app.init();
@@ -64,8 +61,8 @@ describe('EmployeeController (e2e)', () => {
       .expect((res) => {
         expect(res.body).toEqual([
           {
-            ...sampleEmployee,
-            hireDate: sampleEmployee.hireDate.toISOString(),
+            ...shapeEmployee,
+            hireDate: shapeEmployee.hireDate.toISOString(),
             department: sampleDepartment,
           },
         ]);
@@ -80,7 +77,74 @@ describe('EmployeeController (e2e)', () => {
     const result = await request(app.getHttpServer())
       .get('/api/employees/GetAllEmployees')
       .expect(500);
-      
+
     expect(result.body.message).toBe('Database connection error');
+  });
+
+  it('POST /api/employees/CreateEmployee - Happy Path', async () => {
+    const newEmployee = {
+      firstName: 'Jane',
+      lastName: 'Doe',
+      hireDate: new Date('2023-06-01'),
+      phone: '555-555-5556',
+      address: '456 Elm St',
+      departmentId: sampleDepartment.id,
+    };
+
+    const result = await request(app.getHttpServer())
+      .post('/api/employees/CreateEmployee')
+      .send(newEmployee)
+      .expect(201);
+
+    expect(result.body).toEqual(
+      expect.objectContaining({
+        firstName: newEmployee.firstName,
+        lastName: newEmployee.lastName,
+        hireDate: newEmployee.hireDate.toISOString(),
+        phone: newEmployee.phone,
+        address: newEmployee.address,
+        departmentId: newEmployee.departmentId,
+      }),
+    );
+
+    await prisma.employee.delete({ where: { id: result.body.id } });
+  });
+
+  it('POST /api/employees/CreateEmployee - Validation Error', async () => {
+    const invalidEmployee = {
+      firstName: '',
+      lastName: '',
+      hireDate: null,
+      phone: '',
+      address: '',
+      departmentId: null,
+    };
+
+    await request(app.getHttpServer())
+      .post('/api/employees/CreateEmployee')
+      .send(invalidEmployee)
+      .expect(400);
+  });
+
+  it('POST /api/employees/CreateEmployee - Server Error', async () => {
+    jest.spyOn(prisma.employee, 'create').mockImplementationOnce(() => {
+      throw new Error('Create error');
+    });
+
+    const newEmployee = {
+      firstName: 'Jane',
+      lastName: 'Doe',
+      hireDate: new Date('2023-06-01'),
+      phone: '555-555-5556',
+      address: '456 Elm St',
+      departmentId: sampleDepartment.id,
+    };
+
+    const result = await request(app.getHttpServer())
+      .post('/api/employees/CreateEmployee')
+      .send(newEmployee)
+      .expect(400);
+
+    expect(result.body.message).toBe('Create error');
   });
 });
