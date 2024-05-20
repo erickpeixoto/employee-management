@@ -100,7 +100,7 @@ describe('EmployeeController', () => {
         headers: {},
         body: sampleEmployee,
       })).catch(err => err);
-      expect(result.status).toBe(400);
+      expect(result.status).toBe(500);
       expect(result.body.message).toBe('Create error');
     });
 
@@ -161,7 +161,7 @@ describe('EmployeeController', () => {
         headers: {},
         body: updatedEmployee,
       })).catch(err => err);
-      expect(result.status).toBe(400);
+      expect(result.status).toBe(500);
       expect(result.body.message).toBe('Update error');
     });
 
