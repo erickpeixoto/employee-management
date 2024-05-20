@@ -39,3 +39,8 @@ yarn-error.log*
 
 packages/ts-contract/src/**/*.ts
 packages/ts-contract/src/**/*.d.ts
+
+
+# local database
+packages/database/prisma/dev.db
+packages/database/prisma/test.db
