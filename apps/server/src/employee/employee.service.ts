@@ -23,4 +23,14 @@ export class EmployeeService {
     });
     return response;
   }
+
+  async update(employee: Employee) {
+    const { id, firstName, lastName, hireDate, phone, address, departmentId } =
+      employee;
+    const response = await this.prisma.employee.update({
+      where: { id },
+      data: { firstName, lastName, hireDate, phone, address, departmentId },
+    });
+    return response;
+  }
 }
