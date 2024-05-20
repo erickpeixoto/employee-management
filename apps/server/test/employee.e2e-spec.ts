@@ -16,13 +16,23 @@ describe('EmployeeController (e2e)', () => {
     name: 'Engineering',
   };
 
-  const shapeEmployee = {
+  const sampleEmployee = {
     id: 1,
     firstName: 'John',
     lastName: 'Doe',
     hireDate: new Date('2023-05-18'),
     phone: '555-555-5555',
     address: '123 Main St',
+    departmentId: sampleDepartment.id,
+  };
+
+  const updatedEmployee = {
+    id: sampleEmployee.id,
+    firstName: 'Jane',
+    lastName: 'Smith',
+    hireDate: new Date('2023-06-01'),
+    phone: '555-555-5556',
+    address: '456 Elm St',
     departmentId: sampleDepartment.id,
   };
 
@@ -42,7 +52,10 @@ describe('EmployeeController (e2e)', () => {
     });
 
     await prisma.employee.create({
-      data: shapeEmployee,
+      data: {
+        ...sampleEmployee,
+        hireDate: new Date(sampleEmployee.hireDate),
+      },
     });
 
     await app.init();
@@ -54,97 +67,140 @@ describe('EmployeeController (e2e)', () => {
     await app.close();
   });
 
-  it('GET /api/employees/GetAllEmployees - Happy Path', () => {
-    return request(app.getHttpServer())
-      .get('/api/employees/GetAllEmployees')
-      .expect(200)
-      .expect((res) => {
-        expect(res.body).toEqual([
-          {
-            ...shapeEmployee,
-            hireDate: shapeEmployee.hireDate.toISOString(),
-            department: sampleDepartment,
-          },
-        ]);
+  describe('GET /api/employees/GetAllEmployees', () => {
+    it('should return an array of employees - Happy Path', () => {
+      return request(app.getHttpServer())
+        .get('/api/employees/GetAllEmployees')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toEqual([
+            {
+              ...sampleEmployee,
+              hireDate: sampleEmployee.hireDate.toISOString(),
+              department: sampleDepartment,
+            },
+          ]);
+        });
+    });
+
+    it('should handle errors thrown by EmployeeService.getAll - Unhappy Path', async () => {
+      jest.spyOn(prisma.employee, 'findMany').mockImplementationOnce(() => {
+        throw new Error('Database connection error');
       });
+
+      const result = await request(app.getHttpServer())
+        .get('/api/employees/GetAllEmployees')
+        .expect(500);
+
+      expect(result.body.message).toBe('Database connection error');
+    });
   });
 
-  it('GET /api/employees/GetAllEmployees - Unhappy Path', async () => {
-    jest.spyOn(prisma.employee, 'findMany').mockImplementationOnce(() => {
-      throw new Error('Database connection error');
+  describe('POST /api/employees/CreateEmployee', () => {
+    it('should create and return an employee - Happy Path', async () => {
+      const newEmployee = {
+        firstName: 'Jane',
+        lastName: 'Doe',
+        hireDate: new Date('2023-06-01'),
+        phone: '555-555-5556',
+        address: '456 Elm St',
+        departmentId: sampleDepartment.id,
+      };
+
+      const result = await request(app.getHttpServer())
+        .post('/api/employees/CreateEmployee')
+        .send(newEmployee)
+        .expect(201);
+
+      expect(result.body).toEqual(
+        expect.objectContaining({
+          firstName: newEmployee.firstName,
+          lastName: newEmployee.lastName,
+          hireDate: newEmployee.hireDate.toISOString(),
+          phone: newEmployee.phone,
+          address: newEmployee.address,
+          departmentId: newEmployee.departmentId,
+        }),
+      );
+
+      await prisma.employee.delete({ where: { id: result.body.id } });
     });
 
-    const result = await request(app.getHttpServer())
-      .get('/api/employees/GetAllEmployees')
-      .expect(500);
+    it('should return a 400 status with validation errors - Validation Error', async () => {
+      const invalidEmployee = {
+        firstName: '',
+        lastName: '',
+        hireDate: null,
+        phone: '',
+        address: '',
+        departmentId: null,
+      };
 
-    expect(result.body.message).toBe('Database connection error');
-  });
-
-  it('POST /api/employees/CreateEmployee - Happy Path', async () => {
-    const newEmployee = {
-      firstName: 'Jane',
-      lastName: 'Doe',
-      hireDate: new Date('2023-06-01'),
-      phone: '555-555-5556',
-      address: '456 Elm St',
-      departmentId: sampleDepartment.id,
-    };
-
-    const result = await request(app.getHttpServer())
-      .post('/api/employees/CreateEmployee')
-      .send(newEmployee)
-      .expect(201);
-
-    expect(result.body).toEqual(
-      expect.objectContaining({
-        firstName: newEmployee.firstName,
-        lastName: newEmployee.lastName,
-        hireDate: newEmployee.hireDate.toISOString(),
-        phone: newEmployee.phone,
-        address: newEmployee.address,
-        departmentId: newEmployee.departmentId,
-      }),
-    );
-
-    await prisma.employee.delete({ where: { id: result.body.id } });
-  });
-
-  it('POST /api/employees/CreateEmployee - Validation Error', async () => {
-    const invalidEmployee = {
-      firstName: '',
-      lastName: '',
-      hireDate: null,
-      phone: '',
-      address: '',
-      departmentId: null,
-    };
-
-    await request(app.getHttpServer())
-      .post('/api/employees/CreateEmployee')
-      .send(invalidEmployee)
-      .expect(400);
-  });
-
-  it('POST /api/employees/CreateEmployee - Server Error', async () => {
-    jest.spyOn(prisma.employee, 'create').mockImplementationOnce(() => {
-      throw new Error('Create error');
+      const result = await request(app.getHttpServer())
+        .post('/api/employees/CreateEmployee')
+        .send(invalidEmployee)
+        .expect(400);
     });
 
-    const newEmployee = {
-      firstName: 'Jane',
-      lastName: 'Doe',
-      hireDate: new Date('2023-06-01'),
-      phone: '555-555-5556',
-      address: '456 Elm St',
-      departmentId: sampleDepartment.id,
-    };
+    it('should handle server errors - Server Error', async () => {
+      jest.spyOn(prisma.employee, 'create').mockImplementationOnce(() => {
+        throw new Error('Create error');
+      });
 
-    const result = await request(app.getHttpServer())
-      .post('/api/employees/CreateEmployee')
-      .send(newEmployee)
-      .expect(400);
+      const newEmployee = {
+        firstName: 'Jane',
+        lastName: 'Doe',
+        hireDate: new Date('2023-06-01'),
+        phone: '555-555-5556',
+        address: '456 Elm St',
+        departmentId: sampleDepartment.id,
+      };
 
-    expect(result.body.message).toBe('Create error');
+      const result = await request(app.getHttpServer())
+        .post('/api/employees/CreateEmployee')
+        .send(newEmployee)
+        .expect(500);
+
+      expect(result.body.message).toBe('Create error');
+    });
+  });
+
+  describe('PUT /api/employees/UpdateEmployee', () => {
+    it('should update and return an employee - Happy Path', async () => {
+      await request(app.getHttpServer())
+        .put('/api/employees/UpdateEmployee')
+        .send(updatedEmployee)
+        .expect(200);
+    });
+
+    it('should return a 400 status with validation errors - Validation Error', async () => {
+      const invalidEmployee = {
+        id: sampleEmployee.id,
+        firstName: '',
+        lastName: '',
+        hireDate: null,
+        phone: '',
+        address: '',
+        departmentId: null,
+      };
+
+      await request(app.getHttpServer())
+        .put('/api/employees/UpdateEmployee')
+        .send(invalidEmployee)
+        .expect(400);
+    });
+
+    it('should handle server errors - Server Error', async () => {
+      jest.spyOn(prisma.employee, 'update').mockImplementationOnce(() => {
+        throw new Error('Update error');
+      });
+
+      const result = await request(app.getHttpServer())
+        .put('/api/employees/UpdateEmployee')
+        .send(updatedEmployee)
+        .expect(500);
+
+      expect(result.body.message).toBe('Update error');
+    });
   });
 });
