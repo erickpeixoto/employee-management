@@ -30,11 +30,13 @@
   ],
   "dependencies": {
     "@anatine/zod-openapi": "^2.2.5",
+    "@nestjs/serve-static": "^4.0.2",
     "@nestjs/swagger": "^7.3.1",
     "@ts-rest/open-api": "^3.45.2",
     "autoprefixer": "^10.4.19",
     "dotenv-cli": "^7.4.2",
     "postcss": "^8.4.38",
+    "serve-static": "^1.15.0",
     "swagger-ui-express": "^5.0.0",
     "tailwindcss": "^3.4.3"
   }

@@ -1,12 +1,29 @@
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { resolve } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EmployeeModule } from './employee/employee.module';
 
+const coveragePath = resolve(process.cwd(), 'coverage/lcov-report');
 
 @Module({
-  imports: [EmployeeModule],
+  imports: [
+    EmployeeModule,
+    ServeStaticModule.forRoot({
+      rootPath: coveragePath,
+      serveRoot: '/coverage',
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    if (coveragePath) {
+      Logger.log(`Serving static files from: ${coveragePath}`);
+    } else {
+      Logger.error(`Coverage directory does not exist: ${coveragePath}`);
+    }
+  }
+}
