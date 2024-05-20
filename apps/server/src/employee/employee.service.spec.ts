@@ -52,12 +52,7 @@ describe('EmployeeService', () => {
   describe('getAll', () => {
     it('should return an array of employees', async () => {
       const result = await service.getAll();
-      expect(result).toEqual([
-        {
-          ...sampleEmployee,
-          hireDate: sampleEmployee.hireDate.toISOString(),
-        },
-      ]);
+      expect(result).toEqual([sampleEmployee]);
       expect(prisma.employee.findMany).toHaveBeenCalledWith({
         include: {
           department: true,
