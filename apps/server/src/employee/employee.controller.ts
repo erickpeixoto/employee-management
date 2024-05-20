@@ -1,6 +1,11 @@
 import { Controller } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
-import { contract, tsRestHandler, TsRestHandler, employeeSchema } from 'ts-contract';
+import {
+  contract,
+  tsRestHandler,
+  TsRestHandler,
+  employeeSchema,
+} from 'ts-contract';
 import { Employee } from 'database';
 
 @Controller()
@@ -26,7 +31,10 @@ export class EmployeeController {
       },
       create: async ({ body }) => {
         try {
-          const employee = await this.employeeService.create(body as  Employee);
+          const validatedBody = employeeSchema.omit({ id: true }).parse(body);
+          const employee = await this.employeeService.create(
+            validatedBody as Employee,
+          );
           return {
             status: 201,
             body: employee,
@@ -37,7 +45,7 @@ export class EmployeeController {
             body: { message: error.message, errors: error.errors },
           };
         }
-      }
+      },
     });
   }
 }
