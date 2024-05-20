@@ -26,17 +26,16 @@
       "cache": false
     },
     "test": {
-      "dependsOn": ["^test"],
-      "dotEnv": [".env.test.local", ".env.test", ".env"]
+      "cache": false,
+      "dotEnv": [".env.test", ".env"],
+      "outputs": ["coverage/**"]
     },
     "test:e2e": {
-      "dependsOn": ["^build"],
       "dotEnv": [".env.test.local", ".env.test", ".env"],
       "outputs": ["coverage/**"],
       "cache": false
     },
     "test:cov": {
-      "dependsOn": ["^test"],
       "dotEnv": [".env.test", ".env"],
       "outputs": ["coverage/**"],
       "cache": false

@@ -3,7 +3,7 @@ import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 
 extendZodWithOpenApi(z);
 
-const employeeSchema = z.object({
+export const employeeSchema = z.object({
   id: z.number().openapi({ description: 'Employee ID', example: 1 }),
   firstName: z.string().openapi({ description: 'First name of the employee', example: 'John' }),
   lastName: z.string().openapi({ description: 'Last name of the employee', example: 'Doe' }),
