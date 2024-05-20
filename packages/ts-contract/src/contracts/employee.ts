@@ -34,6 +34,16 @@ export const employeeSchema = z.object({
   }).optional(),
 });
 
+const errorResponseSchema = z.object({
+  message: z.string().openapi({ description: "Error message" }),
+  errors: z.array(
+    z.object({
+      message: z.string(),
+      path: z.array(z.string()),
+    })
+  ).optional(),
+});
+
 export const employeeMethods = {
   getAll: {
     method: "GET",
@@ -42,9 +52,8 @@ export const employeeMethods = {
       200: z.array(employeeSchema).openapi({
         description: "List of all employees",
       }),
-      500: z.object({
-        message: z.string().openapi({ description: "Internal server error" }),
-      }).openapi({
+      400: errorResponseSchema.openapi({ description: "Bad request" }),
+      500: errorResponseSchema.openapi({
         description: "Internal server error",
       }),
     },
@@ -57,18 +66,8 @@ export const employeeMethods = {
       201: employeeSchema.openapi({
         description: "Employee created",
       }),
-      400: z.object({
-        message: z.string(),
-        errors: z.array(
-          z.object({
-            message: z.string(),
-            path: z.array(z.string()),
-          })
-        ),
-      }).openapi({ description: "Bad request" }),
-      500: z.object({
-        message: z.object({ message: z.string() }).openapi({ description: "Internal server error" }),
-      }).openapi({
+      400: errorResponseSchema.openapi({ description: "Bad request" }),
+      500: errorResponseSchema.openapi({
         description: "Internal server error",
       }),
     },
@@ -83,18 +82,8 @@ export const employeeMethods = {
       200: employeeSchema.openapi({
         description: "Employee updated",
       }),
-      400: z.object({
-        message: z.string(),
-        errors: z.array(
-          z.object({
-            message: z.string(),
-            path: z.array(z.string()),
-          })
-        ),
-      }).openapi({ description: "Bad request" }),
-      500: z.object({
-        message: z.object({ message: z.string() }).openapi({ description: "Internal server error" }),
-      }).openapi({
+      400: errorResponseSchema.openapi({ description: "Bad request" }),
+      500: errorResponseSchema.openapi({
         description: "Internal server error",
       }),
     },
