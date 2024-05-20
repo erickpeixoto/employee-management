@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { contract, tsRestHandler, TsRestHandler, employeeSchema } from 'ts-contract';
+import { Employee } from 'database';
 
 @Controller()
 export class EmployeeController {
@@ -23,6 +24,20 @@ export class EmployeeController {
           };
         }
       },
+      create: async ({ body }) => {
+        try {
+          const employee = await this.employeeService.create(body as  Employee);
+          return {
+            status: 201,
+            body: employee,
+          };
+        } catch (error) {
+          return {
+            status: 400,
+            body: { message: error.message, errors: error.errors },
+          };
+        }
+      }
     });
   }
 }
