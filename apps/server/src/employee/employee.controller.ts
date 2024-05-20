@@ -46,6 +46,23 @@ export class EmployeeController {
           };
         }
       },
+      update: async ({ body }) => {
+        try {
+          const validatedBody = employeeSchema.parse(body);
+          const employee = await this.employeeService.update(
+            validatedBody as Employee,
+          );
+          return {
+            status: 200,
+            body: employee,
+          };
+        } catch (error) {
+          return {
+            status: 400,
+            body: { message: error.message, errors: error.errors },
+          };
+        }
+      },
     });
   }
 }
