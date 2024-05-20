@@ -73,5 +73,30 @@ export const employeeMethods = {
       }),
     },
   },
-
+  update: {
+    method: "PUT",
+    path: "/employees/UpdateEmployee",
+    body: employeeSchema.extend({
+      id: z.number().openapi({ description: 'Employee ID', example: 1 }),
+    }),
+    responses: {
+      200: employeeSchema.openapi({
+        description: "Employee updated",
+      }),
+      400: z.object({
+        message: z.string(),
+        errors: z.array(
+          z.object({
+            message: z.string(),
+            path: z.array(z.string()),
+          })
+        ),
+      }).openapi({ description: "Bad request" }),
+      500: z.object({
+        message: z.object({ message: z.string() }).openapi({ description: "Internal server error" }),
+      }).openapi({
+        description: "Internal server error",
+      }),
+    },
+  },
 } as const;
