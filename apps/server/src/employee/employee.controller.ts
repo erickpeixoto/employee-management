@@ -5,6 +5,7 @@ import {
   tsRestHandler,
   TsRestHandler,
   employeeSchema,
+  handleError,
 } from 'ts-contract';
 import { Employee } from 'database';
 
@@ -23,44 +24,31 @@ export class EmployeeController {
             body: employees,
           };
         } catch (error) {
-          return {
-            status: 500,
-            body: { message: error.message },
-          };
+          return handleError(error);
         }
       },
       create: async ({ body }) => {
         try {
           const validatedBody = employeeSchema.omit({ id: true }).parse(body);
-          const employee = await this.employeeService.create(
-            validatedBody as Employee,
-          );
+          const employee = await this.employeeService.create(validatedBody as Employee);
           return {
             status: 201,
             body: employee,
           };
         } catch (error) {
-          return {
-            status: 400,
-            body: { message: error.message, errors: error.errors },
-          };
+          return handleError(error);
         }
       },
       update: async ({ body }) => {
         try {
           const validatedBody = employeeSchema.parse(body);
-          const employee = await this.employeeService.update(
-            validatedBody as Employee,
-          );
+          const employee = await this.employeeService.update(validatedBody);
           return {
             status: 200,
             body: employee,
           };
         } catch (error) {
-          return {
-            status: 400,
-            body: { message: error.message, errors: error.errors },
-          };
+          return handleError(error);
         }
       },
     });
