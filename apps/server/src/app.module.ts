@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EmployeeModule } from './employee/employee.module';
+import { DepartmentModule } from './department/department.module';
 
 const coveragePath = resolve(process.cwd(), 'coverage/lcov-report');
 
@@ -14,6 +15,7 @@ const coveragePath = resolve(process.cwd(), 'coverage/lcov-report');
       rootPath: coveragePath,
       serveRoot: '/coverage',
     }),
+    DepartmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
