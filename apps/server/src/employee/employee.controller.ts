@@ -6,6 +6,7 @@ import {
   TsRestHandler,
   employeeSchema,
   handleError,
+  departmentHistorySchema,
 } from 'ts-contract';
 import { Employee } from 'database';
 
@@ -30,7 +31,9 @@ export class EmployeeController {
       getOne: async ({ query }) => {
         try {
           const validatedQuery = employeeSchema.pick({ id: true }).parse(query);
-          const employee = await this.employeeService.getOne(Number(validatedQuery.id));
+          const employee = await this.employeeService.getOne(
+            Number(validatedQuery.id),
+          );
           return {
             status: 200,
             body: employee,
@@ -42,7 +45,9 @@ export class EmployeeController {
       create: async ({ body }) => {
         try {
           const validatedBody = employeeSchema.omit({ id: true }).parse(body);
-          const employee = await this.employeeService.create(validatedBody as Employee);
+          const employee = await this.employeeService.create(
+            validatedBody as Employee,
+          );
           return {
             status: 201,
             body: employee,
@@ -54,7 +59,7 @@ export class EmployeeController {
       update: async ({ body }) => {
         try {
           const validatedBody = employeeSchema.parse(body);
-          const parsedBody = { ...validatedBody, id: Number(validatedBody.id) }; 
+          const parsedBody = { ...validatedBody, id: Number(validatedBody.id) };
           const employee = await this.employeeService.update(parsedBody);
           return {
             status: 200,
@@ -66,11 +71,27 @@ export class EmployeeController {
       },
       delete: async ({ body }) => {
         try {
-         const validatedQuery = employeeSchema.pick({ id: true }).parse(body);
-         const response = await this.employeeService.delete(validatedQuery.id as number);
+          const validatedQuery = employeeSchema.pick({ id: true }).parse(body);
+          const response = await this.employeeService.delete(
+            validatedQuery.id as number,
+          );
           return {
             status: 204,
             body: response,
+          };
+        } catch (error) {
+          return handleError(error);
+        }
+      },
+      getDepartmentHistory: async ({ query }) => {
+        try {
+          const validatedQuery = departmentHistorySchema.pick({ employeeId: true }).parse(query);
+          const history = await this.employeeService.getDepartmentHistory(
+            validatedQuery.employeeId as number,
+          );
+          return {
+            status: 200,
+            body: history,
           };
         } catch (error) {
           return handleError(error);
