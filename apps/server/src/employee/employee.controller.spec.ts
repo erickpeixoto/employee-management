@@ -19,6 +19,15 @@ describe('EmployeeController', () => {
       name: 'Engineering',
     },
   };
+  const departmentHistoryEntry = {
+    id: 1,
+    employeeId: sampleEmployee.id,
+    oldDepartmentId: sampleEmployee.departmentId,
+    newDepartmentId: 3,
+    changeDate: new Date(),
+    oldDepartment: { id: 2, name: 'Engineering' },
+    newDepartment: { id: 3, name: 'HR' },
+  };
 
   const mockEmployeeService = {
     getAll: jest.fn().mockResolvedValue([sampleEmployee]),
@@ -26,6 +35,7 @@ describe('EmployeeController', () => {
     update: jest.fn().mockResolvedValue(sampleEmployee),
     getOne: jest.fn().mockResolvedValue(sampleEmployee),
     delete: jest.fn().mockResolvedValue({ message: 'Employee deleted successfully' }),
+    getDepartmentHistory: jest.fn().mockResolvedValue([departmentHistoryEntry]),
 
   };
 
@@ -193,6 +203,37 @@ describe('EmployeeController', () => {
       const result = await controller.handler().then(handler => handler.delete({ body: { id: 1 }, headers: {} })).catch(err => err);
       expect(result.status).toBe(500);
       expect(result.body.message).toBe('Employee not found');
+    });
+  });
+
+  describe('getDepartmentHistory', () => {
+    it('should return department history for an employee', async () => {
+      const result = await controller.handler().then(handler => handler.getDepartmentHistory({
+        query: { employeeId: sampleEmployee.id },
+        headers: {},
+      }));
+      expect(result.status).toBe(200);
+      expect(result.body).toEqual([departmentHistoryEntry]);
+    });
+
+    it('should handle validation errors', async () => {
+      const result = await controller.handler().then(handler => handler.getDepartmentHistory({
+        query: { employeeId: null },
+        headers: {},
+      })).catch(err => err);
+      expect(result.status).toBe(400);
+      expect(result.body.errors.length).toBeGreaterThan(0);
+    });
+
+    it('should handle server errors', async () => {
+      jest.spyOn(service, 'getDepartmentHistory').mockRejectedValueOnce(new Error('Server error'));
+
+      const result = await controller.handler().then(handler => handler.getDepartmentHistory({
+        query: { employeeId: sampleEmployee.id },
+        headers: {},
+      })).catch(err => err);
+      expect(result.status).toBe(500);
+      expect(result.body.message).toBe('Server error');
     });
   });
 });
