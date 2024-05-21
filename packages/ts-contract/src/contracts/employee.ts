@@ -43,6 +43,15 @@ export const employeeSchema = z.object({
   }).optional(),
 });
 
+export const departmentHistorySchema =
+  z.object({
+    employeeId: z.union([z.number(), z.string()]).openapi({ description: 'Employee ID', example: 1 }),
+    oldDepartmentId: z.number().openapi({ description: 'Old department ID', example: 1 }),
+    newDepartmentId: z.number().openapi({ description: 'New department ID', example: 2 }),
+    changeDate: z.date().openapi({ description: 'Change date', example: employeeExample.hireDate }),
+  })
+
+
 
 export const employeeMethods = {
   getAll: {
@@ -75,6 +84,23 @@ export const employeeMethods = {
       }),
     },
 
+  },
+  getDepartmentHistory: {
+    method: "GET",
+    path: "/employees/GetDepartmentHistory",
+    query: z.object({
+      employeeId: z.union([z.number(), z.string()]).openapi({ description: 'Employee ID', example: 1 }),
+    }),
+    responses: {
+      200: z.array(departmentHistorySchema).openapi({
+        description: "Department history found",
+      }),
+      400: errorResponseSchema.openapi({ description: "Bad request" }),
+      404: errorResponseSchema.openapi({ description: "Employee not found" }),
+      500: errorResponseSchema.openapi({
+        description: "Internal server error",
+      }),
+    },
   },
   create: {
     method: "POST",
@@ -121,25 +147,5 @@ export const employeeMethods = {
       }),
     },
   },
-  getHistory: {
-    method: "GET",
-    path: "/employees/GetEmployeeHistory",
-    query: z.object({
-      employeeId: z.number().openapi({ description: 'Employee ID', example: 1 }),
-    }),
-    responses: {
-      200: z.array(z.object({
-        id: z.number().openapi({ description: 'History ID', example: 1 }),
-        employeeId: z.number().openapi({ description: 'Employee ID', example: 1 }),
-        oldDepartmentId: z.number().openapi({ description: 'Old Department ID', example: 2 }),
-        newDepartmentId: z.number().openapi({ description: 'New Department ID', example: 3 }),
-        changeDate: z.string().openapi({ description: 'Change Date', example: '2023-06-01T00:00:00.000Z' }),
-      })).openapi({ description: 'Department change history' }),
-      400: errorResponseSchema.openapi({ description: "Bad request" }),
-      404: errorResponseSchema.openapi({ description: "Employee not found" }),
-      500: errorResponseSchema.openapi({
-        description: "Internal server error",
-      }),
-    },
-  },
+
 } as const;
