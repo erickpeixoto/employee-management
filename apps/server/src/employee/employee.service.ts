@@ -33,4 +33,17 @@ export class EmployeeService {
     });
     return response;
   }
+
+  async getOne(id: number) {
+    const response = await this.prisma.employee.findUnique({
+      where: { id },
+      include: {
+        department: true,
+      },
+    });
+    if (!response) {
+      throw new Error('Employee not found');
+    }
+    return response;
+  }
 }

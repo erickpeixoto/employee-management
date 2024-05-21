@@ -96,6 +96,38 @@ describe('EmployeeController (e2e)', () => {
     });
   });
 
+  describe('GET /api/employees/GetEmployeeById', () => {
+    it('should return a single employee - Happy Path', async () => {
+      const result = await request(app.getHttpServer())
+        .get(`/api/employees/GetEmployeeById?id=${sampleEmployee.id}`)
+        .expect(200);
+
+      expect(result.body).toEqual({
+        ...sampleEmployee,
+        hireDate: sampleEmployee.hireDate.toISOString(),
+        department: sampleDepartment,
+      });
+    });
+
+    it('should return a 400 status with validation errors - Validation Error', async () => {
+      await request(app.getHttpServer())
+        .get('/api/employees/GetEmployeeById?id=invalid')
+        .expect(400);
+    });
+
+    it('should handle errors thrown by EmployeeService.getOne - Server Error', async () => {
+      jest.spyOn(prisma.employee, 'findUnique').mockImplementationOnce(() => {
+        throw new Error('Database connection error');
+      });
+
+      const result = await request(app.getHttpServer())
+        .get(`/api/employees/GetEmployeeById?id=${sampleEmployee.id}`)
+        .expect(500);
+
+      expect(result.body.message).toBe('Database connection error');
+    });
+  });
+
   describe('POST /api/employees/CreateEmployee', () => {
     it('should create and return an employee - Happy Path', async () => {
       const newEmployee = {

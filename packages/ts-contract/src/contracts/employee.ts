@@ -44,7 +44,6 @@ const errorResponseSchema = z.object({
     })
   ).optional(),
 });
-
 export const employeeMethods = {
   getAll: {
     method: "GET",
@@ -63,7 +62,7 @@ export const employeeMethods = {
     method: "GET",
     path: "/employees/GetEmployeeById",
     query: z.object({
-      id: z.number().openapi({ description: 'Employee ID', example: 1 }),
+      id: z.string().openapi({ description: 'Employee ID', example: 1 }),
     }),
     responses: {
       200: employeeSchema.openapi({
@@ -75,7 +74,6 @@ export const employeeMethods = {
         description: "Internal server error",
       }),
     },
-
   },
   create: {
     method: "POST",
