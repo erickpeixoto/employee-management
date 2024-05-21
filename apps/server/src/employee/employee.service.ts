@@ -24,7 +24,7 @@ export class EmployeeService {
     return response;
   }
 
-  async update(employee: Employee) {
+  async update(employee: Omit<Employee, 'id'> & { id: number }) {
     const { id, firstName, lastName, hireDate, phone, address, departmentId } =
       employee;
     const response = await this.prisma.employee.update({
@@ -45,5 +45,17 @@ export class EmployeeService {
       throw new Error('Employee not found');
     }
     return response;
+  }
+
+  async delete(id: number) {
+    const response = await this.prisma.employee.delete({
+      where: { id },
+    });
+    if (!response) {
+      throw new Error('Employee not found');
+    }
+    return {
+      message: 'Employee deleted successfully',
+    };
   }
 }

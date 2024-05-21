@@ -18,59 +18,33 @@ const employeeExample = {
 };
 
 export const employeeSchema = z.object({
-  id: z.number().openapi({ description: "Employee ID", example: 1 }),
-  firstName: z
-    .string()
-    .openapi({ description: "First name of the employee", example: "John" }),
-  lastName: z
-    .string()
-    .openapi({ description: "Last name of the employee", example: "Doe" }),
-  hireDate: z
-    .preprocess((arg) => {
-      if (typeof arg === "string" || arg instanceof Date) {
-        return new Date(arg);
-      }
-    }, z.date())
-    .openapi({
-      description: "Hire date of the employee",
-      example: employeeExample.hireDate,
-    }),
-  phone: z
-    .string()
-    .openapi({
-      description: "Phone number of the employee",
-      example: "555-555-5555",
-    }),
-  address: z
-    .string()
-    .openapi({
-      description: "Address of the employee",
-      example: "123 Main St",
-    }),
-  departmentId: z
-    .number()
-    .openapi({ description: "Department ID of the employee", example: 2 }),
-  department: z
-    .object({
-      id: z.number().openapi({ description: "Department ID", example: 2 }),
-      name: z
-        .string()
-        .openapi({ description: "Department name", example: "Engineering" }),
-    })
-    .optional(),
+  id: z.union([z.number(), z.string()]).optional().openapi({ description: 'Employee ID', example: 1 }),
+  firstName: z.string().openapi({ description: 'First name of the employee', example: 'John' }),
+  lastName: z.string().openapi({ description: 'Last name of the employee', example: 'Doe' }),
+  hireDate: z.preprocess((arg) => {
+    if (typeof arg === "string" || arg instanceof Date) {
+      return new Date(arg);
+    }
+  }, z.date()).openapi({ description: 'Hire date of the employee', example: employeeExample.hireDate }),
+  phone: z.string().openapi({ description: 'Phone number of the employee', example: '555-555-5555' }),
+  address: z.string().openapi({ description: 'Address of the employee', example: '123 Main St' }),
+  departmentId: z.number().openapi({ description: 'Department ID of the employee', example: 2 }),
+  department: z.object({
+    id: z.number().openapi({ description: 'Department ID', example: 2 }),
+    name: z.string().openapi({ description: 'Department name', example: 'Engineering' }),
+  }).optional(),
 });
 
 const errorResponseSchema = z.object({
   message: z.string().openapi({ description: "Error message" }),
-  errors: z
-    .array(
-      z.object({
-        message: z.string(),
-        path: z.array(z.string()),
-      })
-    )
-    .optional(),
+  errors: z.array(
+    z.object({
+      message: z.string(),
+      path: z.array(z.string()),
+    })
+  ).optional(),
 });
+
 export const employeeMethods = {
   getAll: {
     method: "GET",
@@ -89,7 +63,7 @@ export const employeeMethods = {
     method: "GET",
     path: "/employees/GetEmployeeById",
     query: z.object({
-      id: z.string().openapi({ description: "Employee ID", example: 1 }),
+      id: z.union([z.number(), z.string()]).openapi({ description: 'Employee ID', example: 1}),
     }),
     responses: {
       200: employeeSchema.openapi({
@@ -101,6 +75,7 @@ export const employeeMethods = {
         description: "Internal server error",
       }),
     },
+
   },
   create: {
     method: "POST",
@@ -120,7 +95,7 @@ export const employeeMethods = {
     method: "PUT",
     path: "/employees/UpdateEmployee",
     body: employeeSchema.extend({
-      id: z.number().openapi({ description: "Employee ID", example: 1 }),
+      id: z.number().openapi({ description: 'Employee ID', example: 1 }),
     }),
     responses: {
       200: employeeSchema.openapi({
@@ -135,17 +110,11 @@ export const employeeMethods = {
   delete: {
     method: "DELETE",
     path: "/employees/DeleteEmployee",
-    query: z.object({
-      id: z.string().openapi({ description: "Employee ID", example: 1 }),
+    body: z.object({
+      id: z.number().openapi({ description: 'Employee ID', example: 1 }),
     }),
     responses: {
-      200: z
-        .object({
-          message: z.string().openapi({ description: "Employee deleted" }),
-        })
-        .openapi({
-          description: "Employee deleted",
-        }),
+      204: z.object({ message: z.string() }).openapi({ description: "Employee deleted" }),
       400: errorResponseSchema.openapi({ description: "Bad request" }),
       404: errorResponseSchema.openapi({ description: "Employee not found" }),
       500: errorResponseSchema.openapi({

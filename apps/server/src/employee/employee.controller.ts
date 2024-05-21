@@ -29,9 +29,8 @@ export class EmployeeController {
       },
       getOne: async ({ query }) => {
         try {
-          const queryWithNumberId = { ...query, id: Number(query.id) };
-          const validatedQuery = employeeSchema.pick({ id: true }).parse(queryWithNumberId);
-            const employee = await this.employeeService.getOne(validatedQuery.id);
+          const validatedQuery = employeeSchema.pick({ id: true }).parse(query);
+          const employee = await this.employeeService.getOne(Number(validatedQuery.id));
           return {
             status: 200,
             body: employee,
@@ -55,10 +54,23 @@ export class EmployeeController {
       update: async ({ body }) => {
         try {
           const validatedBody = employeeSchema.parse(body);
-          const employee = await this.employeeService.update(validatedBody);
+          const parsedBody = { ...validatedBody, id: Number(validatedBody.id) }; 
+          const employee = await this.employeeService.update(parsedBody);
           return {
             status: 200,
             body: employee,
+          };
+        } catch (error) {
+          return handleError(error);
+        }
+      },
+      delete: async ({ body }) => {
+        try {
+         const validatedQuery = employeeSchema.pick({ id: true }).parse(body);
+         const response = await this.employeeService.delete(validatedQuery.id as number);
+          return {
+            status: 204,
+            body: response,
           };
         } catch (error) {
           return handleError(error);
