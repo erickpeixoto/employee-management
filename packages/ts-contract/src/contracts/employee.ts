@@ -121,4 +121,25 @@ export const employeeMethods = {
       }),
     },
   },
+  getHistory: {
+    method: "GET",
+    path: "/employees/GetEmployeeHistory",
+    query: z.object({
+      employeeId: z.number().openapi({ description: 'Employee ID', example: 1 }),
+    }),
+    responses: {
+      200: z.array(z.object({
+        id: z.number().openapi({ description: 'History ID', example: 1 }),
+        employeeId: z.number().openapi({ description: 'Employee ID', example: 1 }),
+        oldDepartmentId: z.number().openapi({ description: 'Old Department ID', example: 2 }),
+        newDepartmentId: z.number().openapi({ description: 'New Department ID', example: 3 }),
+        changeDate: z.string().openapi({ description: 'Change Date', example: '2023-06-01T00:00:00.000Z' }),
+      })).openapi({ description: 'Department change history' }),
+      400: errorResponseSchema.openapi({ description: "Bad request" }),
+      404: errorResponseSchema.openapi({ description: "Employee not found" }),
+      500: errorResponseSchema.openapi({
+        description: "Internal server error",
+      }),
+    },
+  },
 } as const;
