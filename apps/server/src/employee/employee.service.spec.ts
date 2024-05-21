@@ -20,12 +20,28 @@ describe('EmployeeService', () => {
     },
   };
 
+  const updatedEmployee = {
+    ...sampleEmployee,
+    departmentId: 3, 
+  };
+
+  const departmentHistoryEntry = {
+    id: 1,
+    employeeId: sampleEmployee.id,
+    oldDepartmentId: sampleEmployee.departmentId,
+    newDepartmentId: updatedEmployee.departmentId,
+    changeDate: new Date(),
+  };
+
   const mockPrismaService = {
     employee: {
       findMany: jest.fn().mockResolvedValue([sampleEmployee]),
       findUnique: jest.fn().mockResolvedValue(sampleEmployee),
       create: jest.fn().mockResolvedValue(sampleEmployee),
       update: jest.fn().mockResolvedValue(sampleEmployee),
+    },
+    departmentHistory: {
+      create: jest.fn().mockResolvedValue(departmentHistoryEntry),
     },
   };
 
@@ -109,8 +125,37 @@ describe('EmployeeService', () => {
   });
 
   describe('update', () => {
-    it('should update and return an employee', async () => {
-      const result = await service.update(sampleEmployee);
+    it('should update an employee and create a department history record if the department changes', async () => {
+      jest.spyOn(prisma.employee, 'findUnique').mockResolvedValueOnce(sampleEmployee);
+
+      const result = await service.update(updatedEmployee);
+      expect(result).toEqual(sampleEmployee);
+      expect(prisma.employee.update).toHaveBeenCalledWith({
+        where: { id: sampleEmployee.id },
+        data: {
+          firstName: sampleEmployee.firstName,
+          lastName: sampleEmployee.lastName,
+          hireDate: sampleEmployee.hireDate,
+          phone: sampleEmployee.phone,
+          address: sampleEmployee.address,
+          departmentId: updatedEmployee.departmentId,
+        },
+      });
+      expect(prisma.departmentHistory.create).toHaveBeenCalledWith({
+        data: {
+          employeeId: sampleEmployee.id,
+          oldDepartmentId: sampleEmployee.departmentId,
+          newDepartmentId: updatedEmployee.departmentId,
+          changeDate: expect.any(Date),
+        },
+      });
+    });
+
+    it('should update an employee without creating a department history record if the department does not change', async () => {
+      const noChangeEmployee = { ...sampleEmployee };
+      jest.spyOn(prisma.employee, 'findUnique').mockResolvedValueOnce(sampleEmployee);
+
+      const result = await service.update(noChangeEmployee);
       expect(result).toEqual(sampleEmployee);
       expect(prisma.employee.update).toHaveBeenCalledWith({
         where: { id: sampleEmployee.id },
@@ -123,6 +168,7 @@ describe('EmployeeService', () => {
           departmentId: sampleEmployee.departmentId,
         },
       });
+      expect(prisma.departmentHistory.create).not.toHaveBeenCalled();
     });
 
     it('should handle errors', async () => {
