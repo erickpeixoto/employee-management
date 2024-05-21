@@ -1,4 +1,4 @@
-import { ZodError } from "zod";
+import { ZodError, z } from "zod";
 
 export * from "./employee";
 export * from "./department";
@@ -19,3 +19,13 @@ export function handleError(error: any) {
     body: { message: error.message },
   };
 }
+
+export const errorResponseSchema = z.object({
+  message: z.string().openapi({ description: "Error message" }),
+  errors: z.array(
+    z.object({
+      message: z.string(),
+      path: z.array(z.string()),
+    })
+  ).optional(),
+});

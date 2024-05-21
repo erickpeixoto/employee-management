@@ -16,7 +16,15 @@ const employeeExample = {
     name: "Engineering",
   },
 };
-
+export const errorResponseSchema = z.object({
+  message: z.string().openapi({ description: "Error message" }),
+  errors: z.array(
+    z.object({
+      message: z.string(),
+      path: z.array(z.string()),
+    })
+  ).optional(),
+});
 export const employeeSchema = z.object({
   id: z.union([z.number(), z.string()]).optional().openapi({ description: 'Employee ID', example: 1 }),
   firstName: z.string().openapi({ description: 'First name of the employee', example: 'John' }),
@@ -35,15 +43,6 @@ export const employeeSchema = z.object({
   }).optional(),
 });
 
-const errorResponseSchema = z.object({
-  message: z.string().openapi({ description: "Error message" }),
-  errors: z.array(
-    z.object({
-      message: z.string(),
-      path: z.array(z.string()),
-    })
-  ).optional(),
-});
 
 export const employeeMethods = {
   getAll: {
