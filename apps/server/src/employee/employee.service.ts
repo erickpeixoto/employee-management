@@ -83,4 +83,16 @@ export class EmployeeService {
       message: 'Employee deleted successfully',
     };
   }
+
+  async getDepartmentHistory(employeeId: number) {
+    const response = await this.prisma.departmentHistory.findMany({
+      where: { employeeId: Number(employeeId) },
+      include: {
+        oldDepartment: true,
+        newDepartment: true,
+      },
+    });
+    return response;
+  }
+
 }
