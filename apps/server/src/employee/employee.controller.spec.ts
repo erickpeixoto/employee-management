@@ -26,6 +26,8 @@ describe('EmployeeController', () => {
     create: jest.fn().mockResolvedValue(sampleEmployee),
     update: jest.fn().mockResolvedValue(sampleEmployee),
     getOne: jest.fn().mockResolvedValue(sampleEmployee),
+    delete: jest.fn().mockResolvedValue({ message: 'Employee deleted successfully' }),
+
   };
 
   beforeEach(async () => {
@@ -153,13 +155,13 @@ describe('EmployeeController', () => {
 
   describe('getOneEmployee', () => {
     it('should return a single employee', async () => {
-      const result = await controller.handler().then(handler => handler.getOne({ query: { id: '1' }, headers: {} }));
+      const result = await controller.handler().then(handler => handler.getOne({ query: { id: 1 }, headers: {} }));
       expect(result.status).toBe(200);
       expect(result.body).toEqual(sampleEmployee);
     });
 
     it('should handle validation errors for query params', async () => {
-      const result = await controller.handler().then(handler => handler.getOne({ query: { id: 'invalid' }, headers: {} })).catch(err => err);
+      const result = await controller.handler().then(handler => handler.getOne({ query: { id: null }, headers: {} })).catch(err => err);
       expect(result.status).toBe(400);
       expect(result.body.errors.length).toBeGreaterThan(0);
     });
@@ -167,7 +169,29 @@ describe('EmployeeController', () => {
     it('should handle server errors', async () => {
       jest.spyOn(service, 'getOne').mockRejectedValueOnce(new Error('Employee not found'));
 
-      const result = await controller.handler().then(handler => handler.getOne({ query: { id: '1' }, headers: {} })).catch(err => err);
+      const result = await controller.handler().then(handler => handler.getOne({ query: { id: 1 }, headers: {} })).catch(err => err);
+      expect(result.status).toBe(500);
+      expect(result.body.message).toBe('Employee not found');
+    });
+  });
+
+  describe('deleteEmployee', () => {
+    it('should delete an employee', async () => {
+      const result = await controller.handler().then(handler => handler.delete({ body: { id: 1 }, headers: {} }));
+      expect(result.status).toBe(204);
+      expect(result.body.message).toBe('Employee deleted successfully');
+    });
+
+    it('should handle validation errors for query params', async () => {
+      const result = await controller.handler().then(handler => handler.delete({ body: { id: null }, headers: {} })).catch(err => err);
+      expect(result.status).toBe(400);
+      expect(result.body.errors.length).toBeGreaterThan(0);
+    });
+
+    it('should handle server errors', async () => {
+      jest.spyOn(service, 'delete').mockRejectedValueOnce(new Error('Employee not found'));
+
+      const result = await controller.handler().then(handler => handler.delete({ body: { id: 1 }, headers: {} })).catch(err => err);
       expect(result.status).toBe(500);
       expect(result.body.message).toBe('Employee not found');
     });
