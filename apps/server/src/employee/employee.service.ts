@@ -7,12 +7,12 @@ export class EmployeeService {
   constructor(private prisma: PrismaService) {}
 
   async getAll() {
-    const reponse = this.prisma.employee.findMany({
+    const reponse = await this.prisma.employee.findMany({
       include: {
         department: true,
       },
     });
-    return (await reponse).map((employee) => employee);
+    return reponse;
   }
 
   async create(employee: Employee) {
