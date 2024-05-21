@@ -25,12 +25,37 @@ export class EmployeeService {
   }
 
   async update(employee: Omit<Employee, 'id'> & { id: number }) {
-    const { id, firstName, lastName, hireDate, phone, address, departmentId } =
-      employee;
-    const response = await this.prisma.employee.update({
-      where: { id },
-      data: { firstName, lastName, hireDate, phone, address, departmentId },
+    const existingEmployee = await this.prisma.employee.findUnique({
+      where: { id: employee.id },
     });
+
+    if (!existingEmployee) {
+      throw new Error('Employee not found');
+    }
+
+    if (existingEmployee.departmentId !== employee.departmentId) {
+      await this.prisma.departmentHistory.create({
+        data: {
+          employeeId: employee.id,
+          oldDepartmentId: existingEmployee.departmentId,
+          newDepartmentId: employee.departmentId,
+          changeDate: new Date(),
+        },
+      });
+    }
+
+    const response = await this.prisma.employee.update({
+      where: { id: employee.id },
+      data: {
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        hireDate: employee.hireDate,
+        phone: employee.phone,
+        address: employee.address,
+        departmentId: employee.departmentId,
+      },
+    });
+
     return response;
   }
 
