@@ -18,7 +18,7 @@ interface ListEmployeeProps {
 export function ListEmployee({ title }: ListEmployeeProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const formRef = useRef<{ submit: () => void, isLoading: boolean }>(null);
+  const formRef = useRef<{ submit: () => void; isLoading: boolean }>(null);
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = apiClientQuery.employees.getAll.useQuery(
@@ -27,6 +27,18 @@ export function ListEmployee({ title }: ListEmployeeProps) {
       query: { page: String(currentPage), limit: String(LIMIT_DEFAULT) },
     }
   );
+  
+
+  if (isLoading) {
+    return (
+      <div
+        className="flex flex-col items-center justify-center w-full h-[300px] border border-border rounded-lg bg-background shadow-lg
+      "
+      >
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -86,13 +98,20 @@ export function ListEmployee({ title }: ListEmployeeProps) {
               </div>
             </li>
           ))}
+          {!data?.body.employees.length && (
+            <li className="text-center py-4">No employees found</li>
+          )}
         </ul>
 
-        <Pagination
-          total={Math.ceil((data?.body.totalEmployees ?? 0) / LIMIT_DEFAULT) || 1}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
+        {data?.body.employees.length! > 0 && (
+          <Pagination
+            total={
+              Math.ceil((data?.body.totalEmployees ?? 0) / LIMIT_DEFAULT) || 1
+            }
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        )}
       </div>
       <ModalComponent
         open={isModalOpen}

@@ -23,10 +23,10 @@ export class EmployeeService {
   }
   
   async create(employee: Employee) {
-    const { firstName, lastName, hireDate, phone, address, departmentId } =
+    const { avatar, firstName, lastName, hireDate, phone, address, departmentId } =
       employee;
     const response = await this.prisma.employee.create({
-      data: { firstName, lastName, hireDate, phone, address, departmentId },
+      data: {avatar, firstName, lastName, hireDate, phone, address, departmentId },
     });
     return response;
   }

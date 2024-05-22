@@ -27,6 +27,7 @@ export const errorResponseSchema = z.object({
 });
 export const employeeSchema = z.object({
   id: z.union([z.number(), z.string()]).optional().openapi({ description: 'Employee ID', example: 1 }),
+  avatar: z.string().openapi({ description: 'Avatar URL', example: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' }), 
   firstName: z.string().min(1).openapi({ description: 'First name of the employee', example: 'John' }),
   lastName: z.string().min(1).openapi({ description: 'Last name of the employee', example: 'Doe' }),
   hireDate: z.preprocess((arg) => {
@@ -36,7 +37,7 @@ export const employeeSchema = z.object({
   }, z.date()).openapi({ description: 'Hire date of the employee', example: employeeExample.hireDate }),
   phone: z.string().openapi({ description: 'Phone number of the employee', example: '555-555-5555' }),
   address: z.string().openapi({ description: 'Address of the employee', example: '123 Main St' }),
-  departmentId: z.number().openapi({ description: 'Department ID of the employee', example: 2 }),
+  departmentId: z.number().min(1).openapi({ description: 'Department ID of the employee', example: 2 }),
   department: z.object({
     id: z.number().openapi({ description: 'Department ID', example: 2 }),
     name: z.string().openapi({ description: 'Department name', example: 'Engineering' }),
