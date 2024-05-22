@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Avatar, Button, Tooltip } from "@nextui-org/react";
 import { Trash2, EyeIcon } from "lucide-react";
 import { Employee, LIMIT_DEFAULT } from "ts-contract";
 import { Pagination } from "@/components/employee/pagination";
 import { apiClientQuery } from "ts-contract";
 import { formatHireDate } from "@/utils";
+import ModalComponent from "../modal";
+import { EmployeeForm } from "./form";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ListEmployeeProps {
   title: string;
@@ -14,9 +17,12 @@ interface ListEmployeeProps {
 
 export function ListEmployee({ title }: ListEmployeeProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const formRef = useRef<{ submit: () => void, isLoading: boolean }>(null);
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = apiClientQuery.employees.getAll.useQuery(
-    ['employees', currentPage],
+    ["employees", currentPage],
     {
       query: { page: String(currentPage), limit: String(LIMIT_DEFAULT) },
     }
@@ -26,11 +32,19 @@ export function ListEmployee({ title }: ListEmployeeProps) {
     setCurrentPage(page);
   };
 
+  const handleSave = () => {
+    formRef.current?.submit();
+  };
+
   return (
     <div className="container pt-5">
       <div className="flex justify-between">
         <h1 className="font-semibold">{title}</h1>
-        <Button color="secondary" className="rounded">
+        <Button
+          color="secondary"
+          className="rounded"
+          onPress={() => setIsModalOpen(true)}
+        >
           New Employee
         </Button>
       </div>
@@ -51,11 +65,9 @@ export function ListEmployee({ title }: ListEmployeeProps) {
                       {employee.firstName} {employee.lastName}
                       <span>({employee.department?.name})</span>
                     </h2>
-                    <p>
-                      Hired Date 
-                    </p>
+                    <p>Hired Date</p>
                     <p className="text-gray-500 text-sm">
-                    {formatHireDate(employee.hireDate)}
+                      {formatHireDate(employee.hireDate)}
                     </p>
                   </div>
                 </div>
@@ -77,11 +89,27 @@ export function ListEmployee({ title }: ListEmployeeProps) {
         </ul>
 
         <Pagination
-          total={Number(data?.body.totalEmployees) / LIMIT_DEFAULT || 1} 
+          total={Math.ceil((data?.body.totalEmployees ?? 0) / LIMIT_DEFAULT) || 1}
           currentPage={currentPage}
           onPageChange={handlePageChange}
         />
       </div>
+      <ModalComponent
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="New Employee"
+        onSave={handleSave}
+        isLoading={formRef.current?.isLoading || false}
+      >
+        <EmployeeForm
+          ref={formRef}
+          onClose={() => {
+            setIsModalOpen(false);
+            setCurrentPage(1);
+            queryClient.invalidateQueries(["employees"]);
+          }}
+        />
+      </ModalComponent>
     </div>
   );
 }
