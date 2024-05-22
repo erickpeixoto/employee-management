@@ -2,7 +2,7 @@ import { z } from "zod";
 import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 
 extendZodWithOpenApi(z);
-
+export const LIMIT_DEFAULT = 5;
 const employeeExample = {
   id: 1,
   firstName: "Will",
@@ -43,6 +43,8 @@ export const employeeSchema = z.object({
   }).optional(),
 });
 
+export type Employee = z.infer<typeof employeeSchema>;
+
 export const departmentHistorySchema =
   z.object({
     employeeId: z.union([z.number(), z.string()]).openapi({ description: 'Employee ID', example: 1 }),
@@ -51,15 +53,25 @@ export const departmentHistorySchema =
     changeDate: z.date().openapi({ description: 'Change date', example: employeeExample.hireDate }),
   })
 
+  export const paginationSchema = z.object({
+    page: z.string().optional().openapi({ description: 'Page number', example: 1 }),
+    limit: z.string().optional().openapi({ description: 'Number of items per page', example: 10 }),
+  });
 
 
 export const employeeMethods = {
   getAll: {
     method: "GET",
     path: "/employees/GetAllEmployees",
+    query: paginationSchema,
     responses: {
-      200: z.array(employeeSchema).openapi({
-        description: "List of all employees",
+      200: z.object({
+        employees: z.array(employeeSchema).openapi({
+          description: "List of employees",
+        }),
+        totalEmployees: z.number().openapi({
+          description: "Total number of employees",
+        }),
       }),
       400: errorResponseSchema.openapi({ description: "Bad request" }),
       500: errorResponseSchema.openapi({
