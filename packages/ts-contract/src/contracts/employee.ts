@@ -27,8 +27,8 @@ export const errorResponseSchema = z.object({
 });
 export const employeeSchema = z.object({
   id: z.union([z.number(), z.string()]).optional().openapi({ description: 'Employee ID', example: 1 }),
-  firstName: z.string().openapi({ description: 'First name of the employee', example: 'John' }),
-  lastName: z.string().openapi({ description: 'Last name of the employee', example: 'Doe' }),
+  firstName: z.string().min(1).openapi({ description: 'First name of the employee', example: 'John' }),
+  lastName: z.string().min(1).openapi({ description: 'Last name of the employee', example: 'Doe' }),
   hireDate: z.preprocess((arg) => {
     if (typeof arg === "string" || arg instanceof Date) {
       return new Date(arg);
