@@ -1,15 +1,15 @@
-import { ClientComponent } from "@/components/client-component";
-import { apiClientQuery } from "ts-contract";
-import { getQueryClient } from "@/utils/react-query/get-query-client";
-import {Button} from "@nextui-org/button";
+import { Employee, apiClient } from "ts-contract";
+import { ListEmployee } from "@/components/employee/list";
+import { ErrorStatus } from "@/components/error-ui";
 
 export default async function Page() {
-  const client = getQueryClient();
-  await apiClientQuery.employees.getAll.prefetchQuery(client, ["users"]);
-
+  const { body, status } = await apiClient.employees.getAll();
+  if (status !== 200) {
+    return <ErrorStatus />;
+  }
   return (
     <main>
-        <ClientComponent />
+      <ListEmployee employees={body as Employee[]} title="All People" />
     </main>
   );
 }
