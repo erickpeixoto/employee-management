@@ -9,14 +9,19 @@
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
-    "@ts-rest/react-query": "^3.45.2",
-    "next": "^14.1.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@tanstack/query-core": "^4.33.0",
     "@tanstack/react-query": "^4.33.0",
     "@tanstack/react-query-devtools": "^4.33.0",
-    "@tanstack/solid-query": "^4.33.0"
+    "@tanstack/solid-query": "^4.33.0",
+    "@ts-rest/react-query": "^3.45.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.379.0",
+    "next": "^14.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.1.1",
