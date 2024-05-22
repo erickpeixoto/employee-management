@@ -5,6 +5,7 @@ import {
   employeeSchema,
   handleError,
   departmentHistorySchema,
+  paginationSchema,
 } from 'ts-contract';
 import { Employee } from 'database';
 import { TsRestHandler, tsRestHandler } from '@ts-rest/nest';
@@ -16,12 +17,15 @@ export class EmployeeController {
   @TsRestHandler(contract.employees)
   async handler() {
     return tsRestHandler(contract.employees, {
-      getAll: async () => {
+      getAll: async ({ query }) => {
         try {
-          const employees = await this.employeeService.getAll();
+          const validatedQuery = paginationSchema.parse(query);
+          const { page, limit } = validatedQuery;
+          const result = await this.employeeService.getAll(Number(page), Number(limit));
+
           return {
             status: 200,
-            body: employees,
+            body: result,
           };
         } catch (error) {
           return handleError(error);
@@ -84,7 +88,9 @@ export class EmployeeController {
       },
       getDepartmentHistory: async ({ query }) => {
         try {
-          const validatedQuery = departmentHistorySchema.pick({ employeeId: true }).parse(query);
+          const validatedQuery = departmentHistorySchema
+            .pick({ employeeId: true })
+            .parse(query);
           const history = await this.employeeService.getDepartmentHistory(
             validatedQuery.employeeId as number,
           );

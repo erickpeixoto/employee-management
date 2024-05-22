@@ -6,15 +6,22 @@ import { Employee } from 'database';
 export class EmployeeService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll() {
-    const reponse = await this.prisma.employee.findMany({
+  async getAll(page: number, limit: number) {
+    const offset = (page - 1) * limit;
+    const employees = await this.prisma.employee.findMany({
+      skip: offset,
+      take: limit,
       include: {
         department: true,
       },
     });
-    return reponse;
+    const totalEmployees = await this.prisma.employee.count();
+    return {
+      employees,
+      totalEmployees,
+    };
   }
-
+  
   async create(employee: Employee) {
     const { firstName, lastName, hireDate, phone, address, departmentId } =
       employee;
