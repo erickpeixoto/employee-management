@@ -18,7 +18,7 @@ async function bootstrap() {
   const document = generateOpenApi(contract, options);
 
   SwaggerModule.setup('docs', app, document);
-
+  app.enableCors();
   await app.listen(3000);
 }
 

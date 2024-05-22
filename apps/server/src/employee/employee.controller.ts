@@ -2,13 +2,12 @@ import { Controller } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import {
   contract,
-  tsRestHandler,
-  TsRestHandler,
   employeeSchema,
   handleError,
   departmentHistorySchema,
 } from 'ts-contract';
 import { Employee } from 'database';
+import { TsRestHandler, tsRestHandler } from '@ts-rest/nest';
 
 @Controller()
 export class EmployeeController {
