@@ -1,6 +1,17 @@
 "use client";
 
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import * as LR from "@uploadcare/blocks";
+import "@uploadcare/blocks/web/lr-file-uploader-regular.min.css";
+
+LR.registerBlocks(LR);
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -23,6 +34,7 @@ import {
 } from "@/components/ui/select";
 import { Employee, employeeSchema } from "ts-contract";
 import { apiClientQuery } from "ts-contract";
+import { Avatar } from "@nextui-org/avatar";
 
 interface EmployeeFormProps {
   onClose: () => void;
@@ -43,14 +55,39 @@ export const EmployeeForm = forwardRef(
         departmentId: 1,
       },
     });
+    const [file, setFile] = useState<string>("");
+    const ctxProviderRef = useRef(null);
+
+    useEffect(() => {
+      setFile("");
+      form.setValue("avatar", "");
+      
+      const ctxProvider = ctxProviderRef.current as HTMLElement | null;
+      if (!ctxProvider) return;
+
+      const handleChangeEvent = (event: any) => {
+        setFile(event.detail.allEntries[0]?.cdnUrl ?? "");
+        form.setValue("avatar", event.detail.allEntries[0]?.cdnUrl ?? "");
+      };
+
+      ctxProvider?.addEventListener("change", handleChangeEvent);
+
+      return () => {
+        ctxProvider?.removeEventListener("change", handleChangeEvent);
+      };
+    }, [setFile, form]);
 
     const { data: departments, isLoading: loadingDepartments } =
       apiClientQuery.departments.getAll.useQuery(["deparments"]);
 
     const { mutate, isLoading } = apiClientQuery.employees.create.useMutation({
       onSuccess: () => {
+        const ctxProvider = ctxProviderRef.current as HTMLElement | null;
+        ctxProvider?.remove();
         form.reset();
         onClose();
+        setFile("");
+        
       },
       onError: (error) => {
         console.error("Error creating employee:", error);
@@ -66,25 +103,39 @@ export const EmployeeForm = forwardRef(
       <main>
         <Form {...form}>
           <form className="space-y-4">
-            <FormField
-              control={form.control}
-              name="avatar"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor={field.name}>Avatar</FormLabel>
-                  <FormControl>
-                    <Input
-                      id={field.name}
-                      placeholder="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage>
-                    {form.formState.errors.avatar?.message}
-                  </FormMessage>
-                </FormItem>
+            <div className="flex justify-between">
+              <div className="flex flex-col gap-y-2 md:h-200px justify-center">
+                <h3 className="text-base">Avatar</h3>
+                <div>
+                  <lr-config
+                    ctx-name="my-uploader"
+                    pubkey="1b52e5f8b8b8aa8a920d"
+                    maxLocalFileSizeBytes={10000000}
+                    multiple={false}
+                    imgOnly={true}
+                    sourceList="local, url, camera"
+                  ></lr-config>
+                  <lr-file-uploader-regular
+                    ctx-name="my-uploader"
+                    class="my-config"
+                  ></lr-file-uploader-regular>
+                  <lr-upload-ctx-provider
+                    ctx-name="my-uploader"
+                    ref={ctxProviderRef}
+                  />
+                </div>
+              </div>
+              {file && (
+                <div className="mt-4">
+                  <Avatar
+                    src={file}
+                    size="lg"
+                    className="md:w-[160px] md:h-[160px] text-large"
+                  />
+                </div>
               )}
-            />
+            </div>
+
             <FormField
               control={form.control}
               name="firstName"

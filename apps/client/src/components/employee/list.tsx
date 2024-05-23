@@ -10,24 +10,28 @@ import { formatHireDate } from "@/utils";
 import ModalComponent from "../modal";
 import { EmployeeForm } from "./form";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface ListEmployeeProps {
   title: string;
 }
 
 export function ListEmployee({ title }: ListEmployeeProps) {
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const formRef = useRef<{ submit: () => void; isLoading: boolean }>(null);
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page")) || 1;
 
-  const { data, isLoading, isError } = apiClientQuery.employees.getAll.useQuery(
-    ["employees", currentPage],
+  const { data, isLoading } = apiClientQuery.employees.getAll.useQuery(
+    ["employees", page],
     {
-      query: { page: String(currentPage), limit: String(LIMIT_DEFAULT) },
+      query: { page: String(page), limit: String(LIMIT_DEFAULT) },
     }
   );
-  
+  const totalOfPages =
+    Math.ceil((data?.body.totalEmployees ?? 0) / LIMIT_DEFAULT) ?? 1;
 
   if (isLoading) {
     return (
@@ -41,7 +45,7 @@ export function ListEmployee({ title }: ListEmployeeProps) {
   }
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    router.push(`?page=${page}`);
   };
 
   const handleSave = () => {
@@ -68,7 +72,10 @@ export function ListEmployee({ title }: ListEmployeeProps) {
                 <div className="flex gap-3 items-center">
                   <Avatar
                     isBordered
-                    src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                    src={
+                      employee.avatar ??
+                      "https://ucarecdn.com/dbf239dd-1282-46d6-af29-092bc555fb9e"
+                    }
                     size="md"
                     className="md:w-[60px] md:h-[60px] text-large"
                   />
@@ -105,10 +112,8 @@ export function ListEmployee({ title }: ListEmployeeProps) {
 
         {data?.body.employees.length! > 0 && (
           <Pagination
-            total={
-              Math.ceil((data?.body.totalEmployees ?? 0) / LIMIT_DEFAULT) || 1
-            }
-            currentPage={currentPage}
+            total={totalOfPages}
+            currentPage={page}
             onPageChange={handlePageChange}
           />
         )}
@@ -124,7 +129,7 @@ export function ListEmployee({ title }: ListEmployeeProps) {
           ref={formRef}
           onClose={() => {
             setIsModalOpen(false);
-            setCurrentPage(1);
+            handlePageChange(totalOfPages);
             queryClient.invalidateQueries(["employees"]);
           }}
         />

@@ -74,3 +74,10 @@
       @apply bg-background text-foreground;
     }
   }
+
+  .my-config {
+    --darkmode: 0;
+    --h-accent: 274;
+    --s-accent: 100%;
+    --l-accent: 61%;
+  }
