@@ -5,27 +5,44 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useForm, Controller } from "react-hook-form";
 import { Employee } from "ts-contract";
+import { useQueryClient } from '@ts-rest/react-query/tanstack';
+import { useEffect, useState } from "react";
+
+
 
 interface UpdateDepartmentFormProps {
   employee: Employee;
 }
 
 export function DepartmentForm({ employee }: UpdateDepartmentFormProps) {
+  const [isChanged, setIsChanged] = useState(false);
   const { data: departmentsData, isLoading: departmentsLoading } = apiClientQuery.departments.getAll.useQuery(["departments"]);
-
-  const { control, handleSubmit } = useForm<Employee>({
+  const queryClient = useQueryClient();
+  const { control, handleSubmit, watch } = useForm<Employee>({
     defaultValues: {
       departmentId: employee.departmentId || 1,
     },
   });
 
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name === "departmentId" && value.departmentId !== employee.departmentId) {
+        setIsChanged(true);
+      } else {
+        setIsChanged(false);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, employee.departmentId]);
+
   const { mutate } = apiClientQuery.employees.update.useMutation({
     onSuccess: () => {
-      console.log("Department updated");
+      queryClient.invalidateQueries(["employees", String(employee.id)]);
     },
     onError: (error) => {
       console.error(error);
-    }
+    },
+    
   });
 
   if (departmentsLoading) {
@@ -52,7 +69,7 @@ export function DepartmentForm({ employee }: UpdateDepartmentFormProps) {
     <form onSubmit={handleSubmit(processSubmit)} className="mt-6">
       <h3 className="text-xl font-semibold">Update Department</h3>
       <div className="flex items-center gap-4 mt-2">
-        <Controller
+      <Controller
           name="departmentId"
           control={control}
           render={({ field }) => (
@@ -73,7 +90,7 @@ export function DepartmentForm({ employee }: UpdateDepartmentFormProps) {
             </Select>
           )}
         />
-        <Button variant="outline" type="submit">
+         <Button color={isChanged ? "success" : "outline"} type="submit" disabled={!isChanged}>
           Update
         </Button>
       </div>

@@ -23,9 +23,25 @@ export class EmployeeService {
   }
 
   async create(employee: Employee) {
-    const { avatar, firstName, lastName, hireDate, phone, address, departmentId } = employee;
+    const {
+      avatar,
+      firstName,
+      lastName,
+      hireDate,
+      phone,
+      address,
+      departmentId,
+    } = employee;
     const response = await this.prisma.employee.create({
-      data: { avatar, firstName, lastName, hireDate, phone, address, departmentId },
+      data: {
+        avatar,
+        firstName,
+        lastName,
+        hireDate,
+        phone,
+        address,
+        departmentId,
+      },
     });
     return response;
   }
@@ -50,7 +66,10 @@ export class EmployeeService {
       });
     }
 
-    const hireDate = typeof employee.hireDate === 'string' ? new Date(employee.hireDate) : employee.hireDate;
+    const hireDate =
+      typeof employee.hireDate === 'string'
+        ? new Date(employee.hireDate)
+        : employee.hireDate;
 
     const response = await this.prisma.employee.update({
       where: { id: employee.id },
@@ -61,6 +80,7 @@ export class EmployeeService {
         phone: employee.phone,
         address: employee.address,
         departmentId: employee.departmentId,
+        isActive: employee.isActive,
       },
     });
 
@@ -89,9 +109,14 @@ export class EmployeeService {
   }
 
   async delete(id: number) {
+    await this.prisma.departmentHistory.deleteMany({
+      where: { employeeId: id },
+    });
+
     const response = await this.prisma.employee.delete({
       where: { id },
     });
+
     if (!response) {
       throw new Error('Employee not found');
     }

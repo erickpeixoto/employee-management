@@ -8,11 +8,10 @@ import { useRouter } from "next/navigation";
 
 interface DrawerProps {
   isOpen?: boolean;
-  handleClose?: () => void;
   children: React.ReactNode;
 }
 
-export function Drawer({ isOpen = true, handleClose, children }: DrawerProps) {
+export function Drawer({ isOpen = true,  children }: DrawerProps) {
   const [open, setOpen] = useState(isOpen);
   const router = useRouter();
 
@@ -28,7 +27,7 @@ export function Drawer({ isOpen = true, handleClose, children }: DrawerProps) {
             <Button
               type="button"
               variant="ghost"
-              onClick={handleClose}
+              onClick={() => router.back()}
               className="absolute right-3 top-2"
             >
               <X className=" text-black dark:text-white" />

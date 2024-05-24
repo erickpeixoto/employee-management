@@ -44,6 +44,7 @@ export const departmentHistorySchema = z.object({
 
 export const employeeSchema = z.object({
   id: z.union([z.number(), z.string()]).optional().openapi({ description: 'Employee ID', example: 1 }),
+  isActive: z.boolean().default(true).openapi({ description: 'Is employee archived', example: false }),
   avatar: z.string().openapi({ description: 'Avatar URL', example: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' }),
   firstName: z.string().min(1).openapi({ description: 'First name of the employee', example: 'John' }),
   lastName: z.string().min(1).openapi({ description: 'Last name of the employee', example: 'Doe' }),
