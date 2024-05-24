@@ -34,9 +34,7 @@ export class EmployeeController {
       getOne: async ({ query }) => {
         try {
           const validatedQuery = employeeSchema.pick({ id: true }).parse(query);
-          const employee = await this.employeeService.getOne(
-            Number(validatedQuery.id),
-          );
+          const employee = await this.employeeService.getOne(Number(validatedQuery.id));
           return {
             status: 200,
             body: employee,
@@ -48,9 +46,7 @@ export class EmployeeController {
       create: async ({ body }) => {
         try {
           const validatedBody = employeeSchema.omit({ id: true }).parse(body);
-          const employee = await this.employeeService.create(
-            validatedBody as Employee,
-          );
+          const employee = await this.employeeService.create(validatedBody as Employee);
           return {
             status: 201,
             body: employee,
@@ -75,9 +71,7 @@ export class EmployeeController {
       delete: async ({ body }) => {
         try {
           const validatedQuery = employeeSchema.pick({ id: true }).parse(body);
-          const response = await this.employeeService.delete(
-            validatedQuery.id as number,
-          );
+          const response = await this.employeeService.delete(validatedQuery.id as number);
           return {
             status: 204,
             body: response,
@@ -88,12 +82,9 @@ export class EmployeeController {
       },
       getDepartmentHistory: async ({ query }) => {
         try {
-          const validatedQuery = departmentHistorySchema
-            .pick({ employeeId: true })
-            .parse(query);
-          const history = await this.employeeService.getDepartmentHistory(
-            validatedQuery.employeeId as number,
-          );
+          const validatedQuery = paginationSchema.merge(departmentHistorySchema.pick({ employeeId: true })).parse(query);
+          const { employeeId, page, limit } = validatedQuery;
+          const history = await this.employeeService.getDepartmentHistory(Number(employeeId), Number(page), Number(limit));
           return {
             status: 200,
             body: history,

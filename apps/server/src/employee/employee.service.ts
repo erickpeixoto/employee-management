@@ -21,12 +21,11 @@ export class EmployeeService {
       totalEmployees,
     };
   }
-  
+
   async create(employee: Employee) {
-    const { avatar, firstName, lastName, hireDate, phone, address, departmentId } =
-      employee;
+    const { avatar, firstName, lastName, hireDate, phone, address, departmentId } = employee;
     const response = await this.prisma.employee.create({
-      data: {avatar, firstName, lastName, hireDate, phone, address, departmentId },
+      data: { avatar, firstName, lastName, hireDate, phone, address, departmentId },
     });
     return response;
   }
@@ -51,12 +50,14 @@ export class EmployeeService {
       });
     }
 
+    const hireDate = typeof employee.hireDate === 'string' ? new Date(employee.hireDate) : employee.hireDate;
+
     const response = await this.prisma.employee.update({
       where: { id: employee.id },
       data: {
         firstName: employee.firstName,
         lastName: employee.lastName,
-        hireDate: employee.hireDate,
+        hireDate: hireDate,
         phone: employee.phone,
         address: employee.address,
         departmentId: employee.departmentId,
@@ -71,11 +72,19 @@ export class EmployeeService {
       where: { id },
       include: {
         department: true,
+        departmentHistories: {
+          include: {
+            oldDepartment: true,
+            newDepartment: true,
+          },
+        },
       },
     });
+
     if (!response) {
       throw new Error('Employee not found');
     }
+
     return response;
   }
 
@@ -91,15 +100,23 @@ export class EmployeeService {
     };
   }
 
-  async getDepartmentHistory(employeeId: number) {
+  async getDepartmentHistory(employeeId: number, page: number, limit: number) {
+    const offset = (page - 1) * limit;
     const response = await this.prisma.departmentHistory.findMany({
+      skip: offset,
+      take: limit,
       where: { employeeId: Number(employeeId) },
       include: {
         oldDepartment: true,
         newDepartment: true,
       },
     });
-    return response;
+    const totalHistories = await this.prisma.departmentHistory.count({
+      where: { employeeId: Number(employeeId) },
+    });
+    return {
+      histories: response,
+      totalHistories,
+    };
   }
-
 }
