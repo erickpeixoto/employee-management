@@ -19,7 +19,7 @@ export default async function EmployeeDetails({
   noStore();
   const client = getQueryClient();
 
-  await apiClientQuery.employees.getOne.prefetchQuery(
+   apiClientQuery.employees.getOne.prefetchQuery(
     client,
     ["employees", id],
     {

@@ -1,68 +1,181 @@
-# Project Name
+# Fullstack Assessment
 
-A brief description of what this project does and who it's for. Include any relevant badges or status indicators.
+This project is a simple employee maintenance web application built as part of the Fullstack Assessment. It consists of a backend server and a frontend client to manage employees and departments. The following instructions outline the project setup, architecture, and how to run the application.
 
+## Project Structure
+
+This project is structured as a monorepo with the following main directories:
+
+- **apps/**: Contains the client and server applications.
+  - **client/**: The frontend application built with Next.js and React.
+  - **server/**: The backend application built with NestJS.
+- **packages/**: Contains shared configurations and libraries.
+- **ts-contract/**: Contains TypeScript type definitions and API contracts.
+
+## Getting Started
 
 ### Prerequisites
 
-List everything needed to get your project up and running.
+Ensure you have the following installed:
+
+- Node.js (>= 18)
+- Bun (package manager, version 1.0.27 or higher)
+- A database tool like SQLite, PostgreSQL, or MySQL (depending on your configuration)
 
 ### Installation
 
-A step-by-step series of examples that tell you how to get a development environment running.
+1. Clone the repository:
 
-## Contributing
+    ```bash
+    git clone https://git.number8.com/erick.peixoto/fullstack-assesment.git
+    cd fullstack-assessment
+    ```
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+2. Install dependencies:
 
-Please ensure to update tests as appropriate.
+    ```bash
+    bun install
+    ```
 
-## Documentation
+3. Set up environment variables:
 
-For more details on using TurboRepo, setting up environments, and building apps with Expo, visit:
+    Create a `.env` file in the root of the project with the following content (example for SQLite):
 
-- [TurboRepo Documentation](https://turborepo.org/docs)
-- [Expo Documentation](https://docs.expo.dev/)
+    ```env
+    DATABASE_URL="file:./dev.db"
+    ```
 
-## Screenshots
+### Database Setup
 
-Here you can add screenshots for different areas of your application, which helps others understand what the project looks like and how it functions.
+1. Run database migrations:
 
-### Example: Mobile Dashboard
+    ```bash
+    bun run db:push
+    ```
 
-![Mobile Dashboard Screenshot](path/to/mobile_dashboard_screenshot.png)
+2. Generate Prisma client:
 
-### Example: Mobile Settings
+    ```bash
+    bun run db:generate
+    ```
 
-![Mobile Settings Screenshot](path/to/mobile_settings_screenshot.png)
+3. Open Prisma Studio to manage your data:
 
-## Deployment
+    ```bash
+    bun run studio
+    ```
 
-Add additional notes about how to deploy this on a live system.
+### Running the Application
 
-## Usage
+1. Start the backend server:
 
-Explain how to run the automated tests for this system, and how to start the development server for React Native.
+    ```bash
+    cd apps/server
+    bun run dev
+    ```
 
-## Built With
+    The server will start on [http://localhost:3000](http://localhost:3000).
 
-* [React](https://reactjs.org/) - A JavaScript library for building user interfaces
-* [React Native](https://reactnative.dev/) - A framework for building native apps using React
-* [Expo](https://expo.dev/) - An open-source platform for making universal native apps
-* [Next.js](https://nextjs.org/) - The React framework used for scalable web applications
-* [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
-* [TypeScript](https://www.typescriptlang.org/) - Used for scalable web and mobile apps
+2. Start the frontend client:
 
-## Authors
+    ```bash
+    cd apps/client
+    bun run dev
+    ```
 
-* **Erick Eduardo** - [Github](https://github.com/erickepeixoto)
+    The client will start on [http://localhost:3001](http://localhost:3001).
 
-## License
+### Running Tests
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+To run the tests, use the following commands:
 
-## Acknowledgments
+1. For unit tests:
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+    ```bash
+    bun run test
+    ```
+
+2. For end-to-end tests:
+
+    ```bash
+    bun run test:e2e
+    ```
+
+## Architecture
+
+### Backend (Server)
+
+The backend is built with NestJS and provides the following RESTful endpoints:
+
+- `GET /api/employees/GetAllEmployees`
+- `GET /api/employees/GetEmployeeById`
+- `POST /api/employees/CreateEmployee`
+- `PUT /api/employees/UpdateEmployee`
+- `DELETE /api/employees/DeleteEmployee`
+- `GET /api/departments/GetAllDepartments`
+
+The backend also includes Swagger for API documentation, available at [http://localhost:3000/api](http://localhost:3000/api).
+
+![Swagger API Documentation](./assets/Screenshot%202024-05-24%20at%2019.16.33.png)
+
+### Frontend (Client)
+
+The frontend is built with Next.js and React. It provides a user interface to manage employees and departments, including features like:
+
+- Viewing the list of employees
+- Creating a new employee
+- Viewing employee details
+- Updating employee department
+- Deactivating/activating employees
+- Deleting employees
+- Viewing department change history
+
+![Frontend Application](./assets/Screenshot%202024-05-24%20at%2018.10.58.png)
+
+## Key Features
+
+- **Employee List Page**: Displays a list of employees with their details. Users can view, update, deactivate, and delete employees from this page.
+- **Employee Details View**: Provides detailed information about an employee, including a dropdown to change the department, a deactivate button, and a department history table.
+- **Confirm Delete Modal**: A modal to confirm the deletion of an employee, ensuring that users do not accidentally delete records.
+- **Smart UI Patterns**: Ensures maintainable and legible code with a focus on good code design and architecture.
+
+## Design Patterns and Best Practices
+
+- **Component-Based Architecture**: The frontend is built with reusable components for maintainability.
+- **API Contracts**: TypeScript contracts ensure type safety and consistency between the frontend and backend.
+- **State Management**: React Query is used for data fetching and state management.
+- **Responsive Design**: The UI is responsive and works well on different screen sizes.
+
+## Packages and Libraries
+
+### Client
+
+- Next.js
+- React
+- React Hook Form
+- React Query
+- Tailwind CSS
+- NextUI
+- Date-fns
+
+### Server
+
+- NestJS
+- Prisma
+- Swagger
+- Zod
+
+### Shared
+
+- TypeScript
+- Zod
+
+## Conclusion
+
+This project demonstrates a fullstack application with a focus on maintainable and scalable code. The architecture follows best practices and modern development methodologies, ensuring a solid foundation for future development.
+
+## Links
+
+- [Coverage Tests]()
+- [Swagger Documentation](http://localhost:3535/docs)
+- [Frontend Application]()
