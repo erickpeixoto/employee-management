@@ -25,78 +25,45 @@ Ensure you have the following installed:
 ### Installation
 
 1. Clone the repository:
-
     ```bash
     git clone https://git.number8.com/erick.peixoto/fullstack-assesment.git
     cd fullstack-assessment
     ```
 
 2. Install dependencies:
-
     ```bash
     bun install
     ```
 
 3. Set up environment variables:
-
     Create a `.env` file in the root of the project with the following content (example for SQLite):
-
     ```env
     DATABASE_URL="file:./dev.db"
     ```
 
 ### Database Setup
 
-1. Run database migrations:
-
-    ```bash
-    bun run db:push
-    ```
-
-2. Generate Prisma client:
-
-    ```bash
-    bun run db:generate
-    ```
-
-3. Open Prisma Studio to manage your data:
-
-    ```bash
-    bun run studio
-    ```
+The database setup and initial seeding are integrated into the development script. No additional steps are required.
 
 ### Running the Application
 
-1. Start the backend server:
-
+1. Start the backend server and frontend client:
     ```bash
-    cd apps/server
     bun run dev
     ```
 
-    The server will start on [http://localhost:3000](http://localhost:3000).
-
-2. Start the frontend client:
-
-    ```bash
-    cd apps/client
-    bun run dev
-    ```
-
-    The client will start on [http://localhost:3001](http://localhost:3001).
+The backend server will start on `http://localhost:3535`, and the frontend client will start on `http://localhost:3000`.
 
 ### Running Tests
 
 To run the tests, use the following commands:
 
-1. For unit tests:
-
+- For unit tests:
     ```bash
     bun run test
     ```
 
-2. For end-to-end tests:
-
+- For end-to-end tests:
     ```bash
     bun run test:e2e
     ```
@@ -109,14 +76,13 @@ The backend is built with NestJS and provides the following RESTful endpoints:
 
 - `GET /api/employees/GetAllEmployees`
 - `GET /api/employees/GetEmployeeById`
+- `GET /api/employees/GetDepartmentHistory`
 - `POST /api/employees/CreateEmployee`
 - `PUT /api/employees/UpdateEmployee`
 - `DELETE /api/employees/DeleteEmployee`
 - `GET /api/departments/GetAllDepartments`
 
-The backend also includes Swagger for API documentation, available at [http://localhost:3000/api](http://localhost:3000/api).
-
-![Swagger API Documentation](./assets/Screenshot%202024-05-24%20at%2019.16.33.png)
+The backend also includes Swagger for API documentation, available at `http://localhost:3000/api`.
 
 ### Frontend (Client)
 
@@ -129,8 +95,6 @@ The frontend is built with Next.js and React. It provides a user interface to ma
 - Deactivating/activating employees
 - Deleting employees
 - Viewing department change history
-
-![Frontend Application](./assets/Screenshot%202024-05-24%20at%2018.10.58.png)
 
 ## Key Features
 
@@ -174,8 +138,11 @@ The frontend is built with Next.js and React. It provides a user interface to ma
 
 This project demonstrates a fullstack application with a focus on maintainable and scalable code. The architecture follows best practices and modern development methodologies, ensuring a solid foundation for future development.
 
-## Links
+---
 
-- [Coverage Tests]()
-- [Swagger Documentation](http://localhost:3535/docs)
-- [Frontend Application]()
+### Links
+
+- **Coverage Tests**: [Coverage Report](http://localhost:3535/coverage)
+- **Swagger**: [API Documentation](http://localhost:3535/api)
+- **Frontend**: [Frontend Application](http://localhost:3000)
+
