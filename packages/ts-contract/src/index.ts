@@ -19,11 +19,11 @@ export const contract = c.router(
 );
 
 export const apiClient = initClient(contract, {
-  baseUrl: "http://localhost:3000",
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL_API!,
   baseHeaders: {},
 });
 
 export const apiClientQuery = initQueryClient(contract, {
-  baseUrl: "http://localhost:3000",
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL_API!,
   baseHeaders: {},
 });

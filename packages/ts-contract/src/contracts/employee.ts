@@ -16,6 +16,7 @@ const employeeExample = {
     name: "Engineering",
   },
 };
+
 export const errorResponseSchema = z.object({
   message: z.string().openapi({ description: "Error message" }),
   errors: z.array(
@@ -25,9 +26,25 @@ export const errorResponseSchema = z.object({
     })
   ).optional(),
 });
+
+const departmentSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+
+export const departmentHistorySchema = z.object({
+  id: z.number(),
+  employeeId: z.union([z.number(), z.string()]).openapi({ description: 'Employee ID', example: 1 }),
+  oldDepartmentId: z.number().openapi({ description: 'Old department ID', example: 1 }),
+  newDepartmentId: z.number().openapi({ description: 'New department ID', example: 2 }),
+  changeDate: z.date().openapi({ description: 'Change date', example: employeeExample.hireDate }),
+  oldDepartment: departmentSchema,
+  newDepartment: departmentSchema,
+});
+
 export const employeeSchema = z.object({
   id: z.union([z.number(), z.string()]).optional().openapi({ description: 'Employee ID', example: 1 }),
-  avatar: z.string().openapi({ description: 'Avatar URL', example: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' }), 
+  avatar: z.string().openapi({ description: 'Avatar URL', example: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' }),
   firstName: z.string().min(1).openapi({ description: 'First name of the employee', example: 'John' }),
   lastName: z.string().min(1).openapi({ description: 'Last name of the employee', example: 'Doe' }),
   hireDate: z.preprocess((arg) => {
@@ -38,27 +55,16 @@ export const employeeSchema = z.object({
   phone: z.string().openapi({ description: 'Phone number of the employee', example: '555-555-5555' }),
   address: z.string().openapi({ description: 'Address of the employee', example: '123 Main St' }),
   departmentId: z.number().min(1).openapi({ description: 'Department ID of the employee', example: 2 }),
-  department: z.object({
-    id: z.number().openapi({ description: 'Department ID', example: 2 }),
-    name: z.string().openapi({ description: 'Department name', example: 'Engineering' }),
-  }).optional(),
+  department: departmentSchema.optional(),
+  departmentHistories: z.array(departmentHistorySchema).optional(),
 });
 
 export type Employee = z.infer<typeof employeeSchema>;
 
-export const departmentHistorySchema =
-  z.object({
-    employeeId: z.union([z.number(), z.string()]).openapi({ description: 'Employee ID', example: 1 }),
-    oldDepartmentId: z.number().openapi({ description: 'Old department ID', example: 1 }),
-    newDepartmentId: z.number().openapi({ description: 'New department ID', example: 2 }),
-    changeDate: z.date().openapi({ description: 'Change date', example: employeeExample.hireDate }),
-  })
-
-  export const paginationSchema = z.object({
-    page: z.string().optional().openapi({ description: 'Page number', example: 1 }),
-    limit: z.string().optional().openapi({ description: 'Number of items per page', example: 10 }),
-  });
-
+export const paginationSchema = z.object({
+  page: z.preprocess((arg) => parseInt(arg as string, 10), z.number()).optional().openapi({ description: 'Page number', example: 1 }),
+  limit: z.preprocess((arg) => parseInt(arg as string, 10), z.number()).optional().openapi({ description: 'Number of items per page', example: 10 }),
+});
 
 export const employeeMethods = {
   getAll: {
@@ -84,7 +90,7 @@ export const employeeMethods = {
     method: "GET",
     path: "/employees/GetEmployeeById",
     query: z.object({
-      id: z.union([z.number(), z.string()]).openapi({ description: 'Employee ID', example: 1}),
+      id: z.union([z.number(), z.string()]).openapi({ description: 'Employee ID', example: 1 }),
     }),
     responses: {
       200: employeeSchema.openapi({
@@ -96,17 +102,21 @@ export const employeeMethods = {
         description: "Internal server error",
       }),
     },
-
   },
   getDepartmentHistory: {
     method: "GET",
     path: "/employees/GetDepartmentHistory",
-    query: z.object({
-      employeeId: z.union([z.number(), z.string()]).openapi({ description: 'Employee ID', example: 1 }),
-    }),
+    query: paginationSchema.merge(
+      departmentHistorySchema.pick({ employeeId: true })
+    ),
     responses: {
-      200: z.array(departmentHistorySchema).openapi({
-        description: "Department history found",
+      200: z.object({
+        histories: z.array(departmentHistorySchema).openapi({
+          description: "Department history found",
+        }),
+        totalHistories: z.number().openapi({
+          description: "Total number of histories",
+        }),
       }),
       400: errorResponseSchema.openapi({ description: "Bad request" }),
       404: errorResponseSchema.openapi({ description: "Employee not found" }),
@@ -160,5 +170,4 @@ export const employeeMethods = {
       }),
     },
   },
-
 } as const;
