@@ -11,6 +11,7 @@ import ModalComponent from "../modal";
 import { EmployeeForm } from "./form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 interface ListEmployeeProps {
   title: string;
@@ -91,11 +92,13 @@ export function ListEmployee({ title }: ListEmployeeProps) {
                   </div>
                 </div>
                 <div className="flex flex-row gap-x-3">
+                  <Link href={`/employee/${employee.id}`}>
                   <Tooltip content="View employee">
                     <span className="text-lg text-success cursor-pointer active:opacity-50">
                       <EyeIcon />
                     </span>
                   </Tooltip>
+                  </Link>
                   <Tooltip color="danger" content="Delete employee">
                     <span className="text-lg text-danger cursor-pointer active:opacity-50">
                       <Trash2 />
