@@ -60,13 +60,15 @@ To run the tests, use the following commands:
 
 - For unit tests:
     ```bash
-    bun run test
+    bun run test:cov
     ```
 
 - For end-to-end tests:
     ```bash
     bun run test:e2e
     ```
+
+![Unity Tests](apps/client/public/repo/unity-tests.png)
 
 ## Architecture
 
@@ -145,4 +147,3 @@ This project demonstrates a fullstack application with a focus on maintainable a
 - **Coverage Tests**: [Coverage Report](http://localhost:3535/coverage)
 - **Swagger**: [API Documentation](http://localhost:3535/api)
 - **Frontend**: [Frontend Application](http://localhost:3000)
-

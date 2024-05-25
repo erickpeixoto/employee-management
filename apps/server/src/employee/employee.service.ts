@@ -66,17 +66,13 @@ export class EmployeeService {
       });
     }
 
-    const hireDate =
-      typeof employee.hireDate === 'string'
-        ? new Date(employee.hireDate)
-        : employee.hireDate;
 
     const response = await this.prisma.employee.update({
       where: { id: employee.id },
       data: {
         firstName: employee.firstName,
         lastName: employee.lastName,
-        hireDate: hireDate,
+        hireDate: employee.hireDate,
         phone: employee.phone,
         address: employee.address,
         departmentId: employee.departmentId,

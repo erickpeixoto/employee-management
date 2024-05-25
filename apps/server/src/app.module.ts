@@ -24,8 +24,6 @@ export class AppModule {
   constructor() {
     if (coveragePath) {
       Logger.log(`Serving static files from: ${coveragePath}`);
-    } else {
-      Logger.error(`Coverage directory does not exist: ${coveragePath}`);
-    }
+    } 
   }
 }
