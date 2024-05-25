@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { PrismaService } from './../src/prisma.service';
 import * as dotenv from 'dotenv';
@@ -24,38 +24,32 @@ describe('DepartmentController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     prisma = app.get<PrismaService>(PrismaService);
 
-    await prisma.department.deleteMany();
-
-    await prisma.department.createMany({
-      data: sampleDepartments,
-    });
-
     await app.init();
   });
 
   afterAll(async () => {
-    await prisma.department.deleteMany();
     await app.close();
   });
 
-  describe('GET /api/departments/GetAllDepartments', () => {
-    it('should return an array of departments - Happy Path', () => {
-      return request(app.getHttpServer())
-        .get('/api/departments/GetAllDepartments')
-        .expect(200)
-        .expect((res) => {
-          expect(res.body).toEqual(sampleDepartments);
-        });
+  it('should return an array of departments - Happy Path', async () => {
+    await prisma.department.createMany({ data: sampleDepartments });
+
+    const response = await request(app.getHttpServer())
+      .get('/api/departments/GetAllDepartments')
+      .expect(200);
+
+    expect(response.body).toEqual(sampleDepartments);
+  });
+
+  it('should handle errors thrown by DepartmentService.getAll - Unhappy Path', async () => {
+    jest.spyOn(prisma.department, 'findMany').mockImplementationOnce(() => {
+      throw new Error('Database connection error');
     });
 
-    it('should handle errors thrown by DepartmentService.getAll - Unhappy Path', async () => {
-      jest.spyOn(prisma.department, 'findMany').mockImplementationOnce(() => {
-        throw new Error('Database connection error');
-      });
+    const response = await request(app.getHttpServer())
+      .get('/api/departments/GetAllDepartments')
+      .expect(500);
 
-      await request(app.getHttpServer())
-        .get('/api/departments/GetAllDepartments')
-        .expect(500);
-    });
+    expect(response.body.message).toBe('Internal server error');
   });
 });

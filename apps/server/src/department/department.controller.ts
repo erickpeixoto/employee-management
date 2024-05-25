@@ -20,7 +20,7 @@ export class DepartmentController {
         } catch (error) {
           return {
             status: 500,
-            body: error.message,
+            body: { message: 'Internal server error' },
           };
         }
       },

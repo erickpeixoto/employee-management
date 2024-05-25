@@ -14,5 +14,6 @@ module.exports = {
   testPathIgnorePatterns: [
     "/node_modules/",
     "src/main.ts"
-  ]
+  ],
+  verbose: true
 };

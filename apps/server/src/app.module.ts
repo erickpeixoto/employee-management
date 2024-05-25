@@ -7,13 +7,18 @@ import { EmployeeModule } from './employee/employee.module';
 import { DepartmentModule } from './department/department.module';
 
 const coveragePath = resolve(process.cwd(), 'coverage/lcov-report');
+const e2eCoveragePath = resolve(process.cwd(), 'coverage-e2e/lcov-report');
 
 @Module({
   imports: [
     EmployeeModule,
     ServeStaticModule.forRoot({
       rootPath: coveragePath,
-      serveRoot: '/coverage',
+      serveRoot: '/unit-coverage',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: e2eCoveragePath,
+      serveRoot: '/e2e-coverage',
     }),
     DepartmentModule,
   ],
