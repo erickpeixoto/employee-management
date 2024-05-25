@@ -68,7 +68,7 @@ To run the tests, use the following commands:
     bun run test:e2e
     ```
 
-![Unity Tests](apps/client/public/repo/unity-tests.png)
+![Unit Tests](apps/client/public/repo/unit-tests.png)
 
 ## Architecture
 
