@@ -6,7 +6,7 @@ module.exports = {
   transform: {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  coverageDirectory: "../coverage",
+  coverageDirectory: "./coverage",
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "src/main.ts"

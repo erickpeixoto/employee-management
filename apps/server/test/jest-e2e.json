@@ -6,6 +6,6 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "coverageDirectory": "../coverage",
+  "coverageDirectory": "../coverage-e2e",
   "globalSetup": "./global-setup.ts"
 }
