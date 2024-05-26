@@ -66,18 +66,9 @@ export class EmployeeService {
       });
     }
 
-
     const response = await this.prisma.employee.update({
       where: { id: employee.id },
-      data: {
-        firstName: employee.firstName,
-        lastName: employee.lastName,
-        hireDate: employee.hireDate,
-        phone: employee.phone,
-        address: employee.address,
-        departmentId: employee.departmentId,
-        isActive: employee.isActive,
-      },
+      data: employee,
     });
 
     return response;
@@ -117,7 +108,7 @@ export class EmployeeService {
       throw new Error('Employee not found');
     }
     return {
-      message: 'Employee deleted successfully',
+      message: 'Employee deleted',
     };
   }
 

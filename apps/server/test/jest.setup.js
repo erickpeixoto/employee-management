@@ -6,6 +6,6 @@ beforeEach(async () => {
   await prisma.department.deleteMany({});
 });
 
-// afterAll(async () => {
-//   await prisma.$disconnect();
-// });
+afterAll(async () => {
+  await prisma.$disconnect();
+});

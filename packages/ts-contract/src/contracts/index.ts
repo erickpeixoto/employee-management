@@ -22,10 +22,18 @@ export function handleError(error: any) {
 
 export const errorResponseSchema = z.object({
   message: z.string().openapi({ description: "Error message" }),
-  errors: z.array(
-    z.object({
-      message: z.string(),
-      path: z.array(z.string()),
-    })
-  ).optional(),
+  errors: z
+    .array(
+      z.object({
+        message: z.string(),
+        path: z.array(z.string()),
+      })
+    )
+    .optional(),
 });
+
+export const formattedErrors = (error: ZodError) =>
+  error.errors.map((err) => ({
+    message: err.message,
+    path: err.path.map(String),
+  }));

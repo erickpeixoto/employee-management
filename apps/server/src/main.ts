@@ -8,9 +8,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const options = new DocumentBuilder()
-    .setTitle('Fullstack Assessment API')
+    .setTitle('Employee Management API')
     .setDescription(
-      'API documentation for the Fullstack Assessment application',
+      'This API is used to manage employees in a company. It allows you to create, read, update, and delete employees.',
     )
     .setVersion('1.0.0')
     .build();

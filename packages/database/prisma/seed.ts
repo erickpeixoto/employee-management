@@ -3,15 +3,12 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Remover todas as relações de empregados com departamentos
+  // Clear existing data
   await prisma.departmentHistory.deleteMany();
-  await prisma.employee.updateMany({
-    data: { departmentId: undefined },
-  });
-
-  // Excluir todos os departamentos
+  await prisma.employee.deleteMany();
   await prisma.department.deleteMany();
 
+  // Seed new data
   const departments = [
     { name: 'Engineering' },
     { name: 'Human Resources' },

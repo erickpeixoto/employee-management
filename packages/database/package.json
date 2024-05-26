@@ -12,7 +12,7 @@
     "db:push": "prisma db push --skip-generate",
     "seed": "ts-node prisma/seed.ts",
     "build": "tsc",
-    "dev": "prisma migrate dev && ts-node prisma/seed.ts && tsc -w",
+    "dev": "ts-node prisma/seed.ts && tsc -w",
     "studio": "prisma studio"
   },
   "dependencies": {

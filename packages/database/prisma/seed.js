@@ -44,20 +44,16 @@ function main() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: 
-                // Remover todas as relações de empregados com departamentos
+                // Clear existing data
                 return [4 /*yield*/, prisma.departmentHistory.deleteMany()];
                 case 1:
-                    // Remover todas as relações de empregados com departamentos
+                    // Clear existing data
                     _a.sent();
-                    return [4 /*yield*/, prisma.employee.updateMany({
-                            data: { departmentId: undefined },
-                        })];
+                    return [4 /*yield*/, prisma.employee.deleteMany()];
                 case 2:
                     _a.sent();
-                    // Excluir todos os departamentos
                     return [4 /*yield*/, prisma.department.deleteMany()];
                 case 3:
-                    // Excluir todos os departamentos
                     _a.sent();
                     departments = [
                         { name: 'Engineering' },

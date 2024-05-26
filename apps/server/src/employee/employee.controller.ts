@@ -6,9 +6,11 @@ import {
   handleError,
   departmentHistorySchema,
   paginationSchema,
+  formattedErrors,
 } from 'ts-contract';
 import { Employee } from 'database';
 import { TsRestHandler, tsRestHandler } from '@ts-rest/nest';
+import { ZodError } from 'zod';
 
 @Controller()
 export class EmployeeController {
@@ -21,20 +23,30 @@ export class EmployeeController {
         try {
           const validatedQuery = paginationSchema.parse(query);
           const { page, limit } = validatedQuery;
-          const result = await this.employeeService.getAll(Number(page), Number(limit));
-
+          const result = await this.employeeService.getAll(
+            Number(page),
+            Number(limit),
+          );
           return {
             status: 200,
             body: result,
           };
         } catch (error) {
-          return handleError(error);
+          if (error instanceof ZodError) {
+            return {
+              status: 400,
+              body: { message: 'Bad request', errors: formattedErrors as any },
+            };
+          }
+          return { status: 500 as const, body: { message: 'Internal server error' } };
         }
       },
       getOne: async ({ query }) => {
         try {
           const validatedQuery = employeeSchema.pick({ id: true }).parse(query);
-          const employee = await this.employeeService.getOne(Number(validatedQuery.id));
+          const employee = await this.employeeService.getOne(
+            Number(validatedQuery.id),
+          );
           return {
             status: 200,
             body: employee,
@@ -46,13 +58,21 @@ export class EmployeeController {
       create: async ({ body }) => {
         try {
           const validatedBody = employeeSchema.omit({ id: true }).parse(body);
-          const employee = await this.employeeService.create(validatedBody as Employee);
+          const employee = await this.employeeService.create(
+            validatedBody as Employee,
+          );
           return {
             status: 201,
             body: employee,
           };
         } catch (error) {
-          return handleError(error);
+          if (error instanceof ZodError) {
+            return {
+              status: 400,
+              body: { message: 'Bad request', errors: formattedErrors as any },
+            };
+          }
+            return { status: 500, body: { message: 'Internal server error' } };
         }
       },
       update: async ({ body }) => {
@@ -71,9 +91,11 @@ export class EmployeeController {
       delete: async ({ body }) => {
         try {
           const validatedQuery = employeeSchema.pick({ id: true }).parse(body);
-          const response = await this.employeeService.delete(validatedQuery.id as number);
+          const response = await this.employeeService.delete(
+            validatedQuery.id as number,
+          );
           return {
-            status: 204,
+            status: 200,
             body: response,
           };
         } catch (error) {
@@ -82,9 +104,15 @@ export class EmployeeController {
       },
       getDepartmentHistory: async ({ query }) => {
         try {
-          const validatedQuery = paginationSchema.merge(departmentHistorySchema.pick({ employeeId: true })).parse(query);
+          const validatedQuery = paginationSchema
+            .merge(departmentHistorySchema.pick({ employeeId: true }))
+            .parse(query);
           const { employeeId, page, limit } = validatedQuery;
-          const history = await this.employeeService.getDepartmentHistory(Number(employeeId), Number(page), Number(limit));
+          const history = await this.employeeService.getDepartmentHistory(
+            Number(employeeId),
+            Number(page),
+            Number(limit),
+          );
           return {
             status: 200,
             body: history,

@@ -163,7 +163,7 @@ export const employeeMethods = {
       id: z.number().openapi({ description: 'Employee ID', example: 1 }),
     }),
     responses: {
-      204: z.object({ message: z.string() }).openapi({ description: "Employee deleted" }),
+      200: z.object({ message: z.string() }).openapi({ description: "Employee deleted" }),
       400: errorResponseSchema.openapi({ description: "Bad request" }),
       404: errorResponseSchema.openapi({ description: "Employee not found" }),
       500: errorResponseSchema.openapi({
