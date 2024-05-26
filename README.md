@@ -1,4 +1,4 @@
-# Fullstack Assessment
+# Employee Management
 
 This project is a simple employee maintenance web application built as part of the Fullstack Assessment. It consists of a backend server and a frontend client to manage employees and departments. The following instructions outline the project setup, architecture, and how to run the application.
 
