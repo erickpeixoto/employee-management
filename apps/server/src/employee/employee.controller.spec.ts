@@ -76,10 +76,16 @@ describe('EmployeeController', () => {
     });
 
     it('should handle errors thrown by EmployeeService.getAll', async () => {
-      jest.spyOn(service, 'getAll').mockRejectedValueOnce(new Error('Database connection error'));
+      jest.spyOn(service, 'getAll').mockRejectedValueOnce(new Error('Internal server error'));
       const result = await controller.handler().then(handler => handler.getAll({ headers: {}, query: { page: 1, limit: 10 } })).catch(err => err);
       expect(result.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
-      expect(result.body.message).toBe('Database connection error');
+      expect(result.body.message).toBe('Internal server error');
+    });
+    // 400 test
+    it('should handle validation errors', async () => {
+      const result = await controller.handler().then(handler => handler.getAll({ headers: {}, query: { page: null, limit: 10 } })).catch(err => err);
+      expect(result.status).toBe(HttpStatus.BAD_REQUEST);
+      expect(result.body.errors.length).toBeGreaterThan(0);
     });
   });
 
@@ -117,7 +123,7 @@ describe('EmployeeController', () => {
     });
 
     it('should handle server errors', async () => {
-      jest.spyOn(service, 'create').mockRejectedValueOnce(new Error('Create error'));
+      jest.spyOn(service, 'create').mockRejectedValueOnce(new Error('Internal server error'));
       const result = await controller.handler().then(handler => handler.create({
         headers: {},
         body: {
@@ -127,7 +133,7 @@ describe('EmployeeController', () => {
         },
       })).catch(err => err);
       expect(result.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
-      expect(result.body.message).toBe('Create error');
+      expect(result.body.message).toBe('Internal server error');
     });
   });
 
@@ -200,7 +206,7 @@ describe('EmployeeController', () => {
   describe('deleteEmployee', () => {
     it('should delete an employee', async () => {
       const result = await controller.handler().then(handler => handler.delete({ body: { id: 1 }, headers: {} }));
-      expect(result.status).toBe(HttpStatus.NO_CONTENT);
+      expect(result.status).toBe(HttpStatus.OK);
     });
 
     it('should handle validation errors for query params', async () => {

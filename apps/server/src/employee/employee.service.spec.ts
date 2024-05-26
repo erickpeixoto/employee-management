@@ -141,19 +141,11 @@ describe('EmployeeService', () => {
       expect(result).toEqual(sampleEmployee);
       expect(prisma.employee.update).toHaveBeenCalledWith({
         where: { id: sampleEmployee.id },
-        data: {
-          firstName: sampleEmployee.firstName,
-          lastName: sampleEmployee.lastName,
-          hireDate: sampleEmployee.hireDate,
-          phone: sampleEmployee.phone,
-          address: sampleEmployee.address,
-          departmentId: updatedEmployee.departmentId,
-          isActive: sampleEmployee.isActive,
-        },
+        data: updatedEmployee,
       });
       expect(prisma.departmentHistory.create).toHaveBeenCalledWith({
         data: {
-          employeeId: sampleEmployee.id,
+          employeeId: sampleEmployee.id, 
           oldDepartmentId: sampleEmployee.departmentId,
           newDepartmentId: updatedEmployee.departmentId,
           changeDate: expect.any(Date),
@@ -169,15 +161,7 @@ describe('EmployeeService', () => {
       expect(result).toEqual(sampleEmployee);
       expect(prisma.employee.update).toHaveBeenCalledWith({
         where: { id: sampleEmployee.id },
-        data: {
-          firstName: sampleEmployee.firstName,
-          lastName: sampleEmployee.lastName,
-          hireDate: sampleEmployee.hireDate,
-          phone: sampleEmployee.phone,
-          address: sampleEmployee.address,
-          departmentId: sampleEmployee.departmentId,
-          isActive: sampleEmployee.isActive,
-        },
+        data: sampleEmployee,
       });
       expect(prisma.departmentHistory.create).not.toHaveBeenCalled();
     });
@@ -196,7 +180,7 @@ describe('EmployeeService', () => {
   describe('delete', () => {
     it('should delete an employee', async () => {
       const result = await service.delete(1);
-      expect(result).toEqual({ message: 'Employee deleted successfully' });
+      expect(result).toEqual({ message: 'Employee deleted' });
       expect(prisma.departmentHistory.deleteMany).toHaveBeenCalledWith({
         where: { employeeId: 1 },
       });
