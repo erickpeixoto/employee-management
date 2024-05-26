@@ -1,6 +1,3 @@
-Here is the improved README with sections for Swagger and Test Coverage links:
-
-```markdown
 # Fullstack Assessment
 
 This project is a simple employee maintenance web application built as part of the Fullstack Assessment. It consists of a backend server and a frontend client to manage employees and departments. The following instructions outline the project setup, architecture, and how to run the application.
@@ -65,13 +62,29 @@ To run the tests, use the following commands:
     ```bash
     bun run test:cov
     ```
-    ![unit-tests](https://github.com/erickpeixoto/fullstack-assessment/assets/6097655/bf6fb843-caf8-4e7e-81e9-e8e412230039)
+![unit-tests](https://github.com/erickpeixoto/fullstack-assessment/assets/6097655/bf6fb843-caf8-4e7e-81e9-e8e412230039)
 
 - For end-to-end tests:
     ```bash
     bun run test:e2e
     ```
-    ![e2e Tests](https://github.com/erickpeixoto/fullstack-assessment/assets/6097655/d4893c76-a30d-4752-ac4e-ced3e5ebb3fd)
+
+![e2e Tests](https://github.com/erickpeixoto/fullstack-assessment/assets/6097655/d4893c76-a30d-4752-ac4e-ced3e5ebb3fd)
+
+### Test Coverage Report
+
+The test coverage report shows the extent to which the codebase is covered by automated tests, highlighting areas that may need additional testing.
+ [Coverage Report](http://localhost:3535/coverage)
+
+ ![Test Coverage Report](https://github.com/erickpeixoto/fullstack-assessment/assets/6097655/05326ab7-e072-4867-b4b5-67221b9ef9cd)
+
+### Swagger API Documentation
+
+ The Swagger documentation provides a comprehensive overview of all API endpoints available in the backend server, including request and response schemas.
+ [Swagger API Documentation](http://localhost:3535/docs)
+ ![Docs: ](https://github.com/erickpeixoto/fullstack-assessment/assets/6097655/4a9b0a5e-1110-43ee-a1fd-c786e6247f41)
+
+
 
 ## Architecture
 
@@ -87,7 +100,7 @@ The backend is built with NestJS and provides the following RESTful endpoints:
 - `DELETE /api/employees/DeleteEmployee`
 - `GET /api/departments/GetAllDepartments`
 
-The backend also includes Swagger for API documentation, available at `http://localhost:3535/docs`.
+The backend also includes Swagger for API documentation, available at `http://localhost:3000/api`.
 
 ### Frontend (Client)
 
@@ -150,32 +163,3 @@ This project demonstrates a fullstack application with a focus on maintainable a
 - **Coverage Tests**: [Coverage Report](http://localhost:3535/coverage)
 - **Swagger**: [API Documentation](http://localhost:3535/docs)
 - **Frontend**: [Frontend Application](http://localhost:3000)
-
----
-
-### Swagger API Documentation
-
-- **Title**: Swagger API Documentation
-- **Explanation**: The Swagger documentation provides a comprehensive overview of all API endpoints available in the backend server, including request and response schemas.
-- **Link**: [Swagger API Documentation](http://localhost:3535/docs)
-- **Image**:
-    ![Swagger API Documentation](https://your-image-url/swagger-docs.png)
-
----
-
-### Test Coverage Report
-
-- **Title**: Test Coverage Report
-- **Explanation**: The test coverage report shows the extent to which the codebase is covered by automated tests, highlighting areas that may need additional testing.
-- **Link**: [Coverage Report](http://localhost:3535/coverage)
-- **Image**:
-    ![Test Coverage Report](https://your-image-url/coverage-report.png)
-```
-
-### Explanation
-
-- The README is enhanced with sections for Swagger and Test Coverage.
-- Each section includes a title, explanation, link, and an image placeholder.
-- Adjust the image URLs to match your actual image locations.
-
-Feel free to adjust the explanations and URLs according to your needs.
