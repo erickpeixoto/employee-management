@@ -78,6 +78,12 @@ The test coverage report shows the extent to which the codebase is covered by au
 
  ![Test Coverage Report](https://github.com/erickpeixoto/fullstack-assessment/assets/6097655/05326ab7-e072-4867-b4b5-67221b9ef9cd)
 
+ ### Playwright e2e Coverage Report
+
+The playwright test coverage report indicates the percentage covered by automated tests.
+ [Coverage Report](http://localhost:3535/client-e2e-coverage/)
+
+![Test Coverage Report](https://github.com/erickpeixoto/employee-management/assets/6097655/a9d6fd48-3204-4a6b-a18c-dfbb45f65ffb)
 ### Swagger API Documentation
 
  The Swagger documentation provides a comprehensive overview of all API endpoints available in the backend server, including request and response schemas.

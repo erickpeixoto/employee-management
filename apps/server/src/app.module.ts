@@ -7,6 +7,7 @@ import { EmployeeModule } from './employee/employee.module';
 import { DepartmentModule } from './department/department.module';
 
 const coveragePath = resolve(process.cwd(), 'coverage/lcov-report');
+const playwrightCoveragePath = resolve(process.cwd(), '../../packages/testing/playwright-report');
 
 @Module({
   imports: [
@@ -14,6 +15,10 @@ const coveragePath = resolve(process.cwd(), 'coverage/lcov-report');
     ServeStaticModule.forRoot({
       rootPath: coveragePath,
       serveRoot: '/unit-coverage',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: playwrightCoveragePath,
+      serveRoot: '/client-e2e-coverage',
     }),
      DepartmentModule,
   ],
