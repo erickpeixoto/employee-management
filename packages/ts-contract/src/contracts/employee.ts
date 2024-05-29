@@ -55,7 +55,9 @@ export const employeeSchema = z.object({
   }, z.date()).openapi({ description: 'Hire date of the employee', example: employeeExample.hireDate }),
   phone: z.string().openapi({ description: 'Phone number of the employee', example: '555-555-5555' }),
   address: z.string().openapi({ description: 'Address of the employee', example: '123 Main St' }),
-  departmentId: z.number().min(1).openapi({ description: 'Department ID of the employee', example: 2 }),
+  departmentId: z.number({
+    message: 'Department ID of the employee'
+  }).min(1).openapi({ description: 'Department ID of the employee', example: 2 }),
   department: departmentSchema.optional(),
   departmentHistories: z.array(departmentHistorySchema).optional(),
 });

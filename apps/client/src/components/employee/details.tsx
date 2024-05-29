@@ -1,44 +1,62 @@
 "use client";
 
-import { useState } from "react";
-import { apiClientQuery } from "ts-contract";
+import { LIMIT_DEFAULT, apiClientQuery } from "ts-contract";
 import { formatHireDate } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { DepartmentForm } from "@/components/employee/department/form";
 import { HistoryList } from "@/components/employee/department/history-list";
 import { useQueryClient } from "@ts-rest/react-query/tanstack";
+import { Pagination } from "./pagination";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Avatar } from "@nextui-org/react";
 
 interface DetailsProps {
   id: string;
 }
 
 export function Details({ id }: DetailsProps) {
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page")) || 1;
+  const queryClient = useQueryClient();
+  const apiEmployees = apiClientQuery.employees;
+
   const { data: employeeData, isLoading: employeeLoading } =
-    apiClientQuery.employees.getOne.useQuery(["employees", id], {
+    apiEmployees.getOne.useQuery(["employees", id], {
       query: { id },
+    });
+  const { data: employeeHistory, isLoading: loadingHistory } =
+    apiEmployees.getDepartmentHistory.useQuery(["employee-history", page, id], {
+      query: {
+        page: String(page),
+        limit: String(LIMIT_DEFAULT),
+        employeeId: id,
+      },
     });
 
   const employee = employeeData?.body;
-  const queryClient = useQueryClient();
-  const [isActive, setIsActive] = useState(employee?.isActive);
+  const departmentHistories = employeeHistory?.body;
 
-  const { mutate } = apiClientQuery.employees.update.useMutation({
+  const { mutate } = apiEmployees.update.useMutation({
     onSuccess: () => {
-      setIsActive((prev) => !prev);
       queryClient.invalidateQueries(["employees", id]);
-      queryClient.invalidateQueries(["employees"]);
     },
     onError: (error) => {
       console.error(error);
     },
   });
 
+  const handlePageChange = (page: number) => {
+    router.push(`?page=${page}`);
+  };
+  const totalOfPage =
+    Math.ceil((departmentHistories?.totalHistories ?? 0) / LIMIT_DEFAULT) ?? 1;
   const toggleActiveStatus = () => {
-    const newStatus = !isActive;
     mutate({
       body: {
         id: Number(id),
-        isActive: newStatus,
+        isActive: !employee?.isActive,
         avatar: employee?.avatar!,
         firstName: employee?.firstName!,
         lastName: employee?.lastName!,
@@ -60,9 +78,11 @@ export function Details({ id }: DetailsProps) {
         <div className="flex items-center gap-4">
           <div className="relative w-32 h-32 bg-gray-200 rounded-lg">
             {employee?.avatar ? (
-              <img
+              <Avatar
                 src={employee.avatar}
                 alt={`${employee.firstName} ${employee.lastName}`}
+                isBordered
+                isDisabled={!employee.isActive}
                 className="w-full h-full object-cover rounded-lg"
               />
             ) : (
@@ -70,7 +90,7 @@ export function Details({ id }: DetailsProps) {
                 No Image
               </div>
             )}
-            {!isActive && (
+            {!employee?.isActive && (
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white font-bold">
                 Inactive
               </div>
@@ -87,11 +107,11 @@ export function Details({ id }: DetailsProps) {
           <p className="text-lg font-semibold">Hire Date</p>
           <p className="text-gray-600">{formatHireDate(employee?.hireDate!)}</p>
           <Button
-            color={isActive ? "danger" : "success"}
+            color={employee?.isActive ? "danger" : "success"}
             className="mt-2"
             onClick={toggleActiveStatus}
           >
-            {isActive ? "Deactivate" : "Activate"}
+            {employee?.isActive ? "Deactivate" : "Activate"}
           </Button>
         </div>
       </div>
@@ -99,7 +119,17 @@ export function Details({ id }: DetailsProps) {
       <div className="mt-6">
         <h3 className="text-xl font-semibold">Department History</h3>
         {employee?.departmentHistories && (
-          <HistoryList departmentHistories={employee.departmentHistories} />
+          <div className="flex items-end flex-col">
+            <HistoryList
+              departmentHistories={departmentHistories?.histories}
+              isLoading={loadingHistory}
+            />
+            <Pagination
+              total={totalOfPage}
+              currentPage={page}
+              onPageChange={handlePageChange}
+            />
+          </div>
         )}
       </div>
     </div>

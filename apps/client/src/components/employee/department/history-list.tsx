@@ -1,13 +1,25 @@
 "use client";
 
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Spinner,
+} from "@nextui-org/react";
 import { Employee } from "ts-contract";
 
 interface HistoryListProps {
-  departmentHistories: Employee['departmentHistories'];
+  departmentHistories: Employee["departmentHistories"];
+  isLoading?: boolean;
 }
 
-export function HistoryList({ departmentHistories = [] }: HistoryListProps){
+export function HistoryList({
+  departmentHistories = [],
+  isLoading,
+}: HistoryListProps) {
   return (
     <Table aria-label="Department History" className="mt-4">
       <TableHeader>
@@ -15,10 +27,16 @@ export function HistoryList({ departmentHistories = [] }: HistoryListProps){
         <TableColumn>OLD DEPARTMENT</TableColumn>
         <TableColumn>NEW DEPARTMENT</TableColumn>
       </TableHeader>
-      <TableBody emptyContent={"No rows to display."}>
+      <TableBody
+        isLoading={isLoading}
+        loadingContent={<Spinner label="Loading..." />}
+        emptyContent={"No rows to display."}
+      >
         {departmentHistories.map((history) => (
           <TableRow key={history.id}>
-            <TableCell>{new Date(history.changeDate).toLocaleDateString()}</TableCell>
+            <TableCell>
+              {new Date(history.changeDate).toLocaleDateString()}
+            </TableCell>
             <TableCell>{history.oldDepartment?.name}</TableCell>
             <TableCell>{history.newDepartment?.name}</TableCell>
           </TableRow>
@@ -26,6 +44,4 @@ export function HistoryList({ departmentHistories = [] }: HistoryListProps){
       </TableBody>
     </Table>
   );
-};
-
-
+}

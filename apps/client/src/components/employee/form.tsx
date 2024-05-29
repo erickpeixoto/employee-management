@@ -44,15 +44,14 @@ export const EmployeeForm = forwardRef(
   ({ onClose }: EmployeeFormProps, ref) => {
     const form = useForm<Employee>({
       resolver: zodResolver(
-        employeeSchema.omit({ id: true, department: true })
+        employeeSchema
       ),
       defaultValues: {
         firstName: "",
         lastName: "",
         phone: "",
         address: "",
-        hireDate: new Date(),
-        departmentId: 1,
+        hireDate: new Date()
       },
     });
     const [file, setFile] = useState<string>("");

@@ -40,42 +40,43 @@ var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var departments, _i, departments_1, department;
+        var departmentsCount, departments, _i, departments_1, department;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: 
-                // Clear existing data
-                return [4 /*yield*/, prisma.departmentHistory.deleteMany()];
+                case 0: return [4 /*yield*/, prisma.department.count()];
                 case 1:
-                    // Clear existing data
-                    _a.sent();
-                    return [4 /*yield*/, prisma.employee.deleteMany()];
+                    departmentsCount = _a.sent();
+                    if (!(departmentsCount === 0)) return [3 /*break*/, 8];
+                    return [4 /*yield*/, prisma.departmentHistory.deleteMany()];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, prisma.department.deleteMany()];
+                    return [4 /*yield*/, prisma.employee.deleteMany()];
                 case 3:
                     _a.sent();
+                    return [4 /*yield*/, prisma.department.deleteMany()];
+                case 4:
+                    _a.sent();
                     departments = [
-                        { name: 'Engineering' },
-                        { name: 'Human Resources' },
-                        { name: 'Marketing' },
+                        { name: "Engineering" },
+                        { name: "Human Resources" },
+                        { name: "Marketing" },
                     ];
                     _i = 0, departments_1 = departments;
-                    _a.label = 4;
-                case 4:
-                    if (!(_i < departments_1.length)) return [3 /*break*/, 7];
+                    _a.label = 5;
+                case 5:
+                    if (!(_i < departments_1.length)) return [3 /*break*/, 8];
                     department = departments_1[_i];
                     return [4 /*yield*/, prisma.department.create({
                             data: department,
                         })];
-                case 5:
-                    _a.sent();
-                    _a.label = 6;
                 case 6:
-                    _i++;
-                    return [3 /*break*/, 4];
+                    _a.sent();
+                    _a.label = 7;
                 case 7:
-                    console.log('Departments created successfully!');
+                    _i++;
+                    return [3 /*break*/, 5];
+                case 8:
+                    console.log("Departments created successfully!");
                     return [2 /*return*/];
             }
         });

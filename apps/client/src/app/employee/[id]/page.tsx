@@ -6,6 +6,7 @@ import { GripHorizontal } from "lucide-react";
 import { dehydrate } from "@tanstack/query-core";
 import { getQueryClient } from "@/utils/react-query/get-query-client";
 import { Hydrate } from "@/utils/react-query/hydrate.client";
+import { Suspense } from "react";
 
 interface EmployeeDetailsProps {
   params: {
@@ -19,15 +20,23 @@ export default async function EmployeeDetails({
   noStore();
   const client = getQueryClient();
 
-   apiClientQuery.employees.getOne.prefetchQuery(
+  apiClientQuery.employees.getOne.prefetchQuery(client, ["employees", id], {
+    query: { id },
+  });
+  apiClientQuery.employees.getDepartmentHistory.prefetchQuery(
     client,
-    ["employees", id],
+    ["employees-history", id],
     {
-      query: { id },
+      query: {
+        page: "1",
+        limit: "10",
+        employeeId: id,
+      },
     }
   );
-
-  await apiClientQuery.departments.getAll.prefetchQuery(client, ["departments"]);
+  await apiClientQuery.departments.getAll.prefetchQuery(client, [
+    "departments",
+  ]);
   const dehydratedState = dehydrate(client);
 
   return (
@@ -38,7 +47,9 @@ export default async function EmployeeDetails({
             <GripHorizontal size={32} className="cursor-s-resize" />
             <h1 className="text-2xl font-semibold">Employee Details</h1>
           </div>
-          <Details id={id} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Details id={id} />
+          </Suspense>
         </div>
       </Drawer>
     </Hydrate>

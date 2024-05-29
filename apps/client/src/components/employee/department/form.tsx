@@ -13,14 +13,18 @@ import { Employee } from "ts-contract";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiClientQuery } from "ts-contract";
 import { Button } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
+
 
 interface UpdateDepartmentFormProps {
   employee: Employee;
 }
 
 export function DepartmentForm({ employee }: UpdateDepartmentFormProps) {
+
   const [isChanged, setIsChanged] = useState(false);
   const queryClient = useQueryClient();
+  const page = Number(useSearchParams().get("page")) || 1;
   const { data: departmentsData, isLoading: departmentsLoading } =
     apiClientQuery.departments.getAll.useQuery(["departments"]);
 
@@ -50,6 +54,8 @@ export function DepartmentForm({ employee }: UpdateDepartmentFormProps) {
   const { mutate } = apiClientQuery.employees.update.useMutation({
     onSuccess: () => {
       queryClient.invalidateQueries(["employees", String(employee.id)]);
+      queryClient.invalidateQueries(["employee-history", page, String(employee.id)]);
+
       setIsChanged(false);
     },
     onError: (error) => {

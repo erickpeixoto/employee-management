@@ -19,7 +19,7 @@ export function Drawer({ isOpen = true,  children }: DrawerProps) {
     setOpen(isOpen);
   }, [isOpen]);
   return (
-    <MyDrawer.Root dismissible={true} onClose={() => router.back() } open={open}>
+    <MyDrawer.Root dismissible={true} onClose={() => router.push('/') } open={open}>
       <MyDrawer.Portal>
         <MyDrawer.Overlay className="fixed inset-0 bg-black/40" />
         <MyDrawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-[10px]">
@@ -27,7 +27,7 @@ export function Drawer({ isOpen = true,  children }: DrawerProps) {
             <Button
               type="button"
               variant="ghost"
-              onClick={() => router.back()}
+              onClick={() => router.push("/")}
               className="absolute right-3 top-2"
             >
               <X className=" text-black dark:text-white" />

@@ -1,27 +1,29 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clear existing data
-  await prisma.departmentHistory.deleteMany();
-  await prisma.employee.deleteMany();
-  await prisma.department.deleteMany();
 
-  // Seed new data
-  const departments = [
-    { name: 'Engineering' },
-    { name: 'Human Resources' },
-    { name: 'Marketing' },
-  ];
+  const departmentsCount = await prisma.department.count();
+  if (departmentsCount === 0) {
+    await prisma.departmentHistory.deleteMany();
+    await prisma.employee.deleteMany();
+    await prisma.department.deleteMany();
 
-  for (const department of departments) {
-    await prisma.department.create({
-      data: department,
-    });
+    const departments = [
+      { name: "Engineering" },
+      { name: "Human Resources" },
+      { name: "Marketing" },
+    ];
+
+    for (const department of departments) {
+      await prisma.department.create({
+        data: department,
+      });
+    }
   }
-
-  console.log('Departments created successfully!');
+  console.log("Departments created successfully!");
+  return;
 }
 
 main()
