@@ -12,7 +12,8 @@
     "test": "turbo test",
     "test:e2e": "dotenv -e .env.test -- turbo run test:e2e",
     "test:cov": "turbo test",
-    "studio": "turbo studio"
+    "studio": "turbo studio",
+    "build:all": "cd packages/ts-contract && npm run build && cd ../database && npm run build && cd ../../ && turbo build"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
