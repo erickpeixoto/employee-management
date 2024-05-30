@@ -1,12 +1,21 @@
 {
   "name": "ts-contract",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "files": [
     "dist",
     "src",
     "types"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist",
+      "node": "./dist",
+      "import": "./dist"
+     },
+    "./styles.css": "./dist/index.css"
+  },
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",

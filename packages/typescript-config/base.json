@@ -16,11 +16,6 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2022",
-    "types": ["@uploadcare/blocks/types/jsx"],
-    "baseUrl": ".",
-    "paths": {
-      "ts-contract": ["packages/ts-contract/src"],
-      "database": ["packages/database/src"]
-    }
+    "types": ["@uploadcare/blocks/types/jsx"]
   },
 }
