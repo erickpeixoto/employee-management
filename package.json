@@ -2,7 +2,7 @@
   "name": "@boilerplate/monorepo",
   "private": true,
   "scripts": {
-    "build": "turbo build --output public",
+    "build": "turbo build",
     "dev": "turbo dev",
     "db:push": "turbo db:push",
     "db:generate": "turbo db:generate",
