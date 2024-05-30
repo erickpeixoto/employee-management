@@ -30,7 +30,7 @@ export function HistoryList({
       <TableBody
         isLoading={isLoading}
         loadingContent={<Spinner label="Loading..." />}
-        emptyContent={"No rows to display."}
+        emptyContent={"No history found"}
       >
         {departmentHistories.map((history) => (
           <TableRow key={history.id}>

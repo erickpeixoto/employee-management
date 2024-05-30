@@ -82,7 +82,7 @@ export function ListEmployee({ title }: ListEmployeeProps) {
   };
 
   return (
-    <div className="container pt-5">
+    <div className="container pt-5 h-screen pb-36">
       <div className="flex justify-between">
         <h1 className="font-semibold">{title}</h1>
         <Button
@@ -93,7 +93,8 @@ export function ListEmployee({ title }: ListEmployeeProps) {
           New Employee
         </Button>
       </div>
-      <div className="mt-6 border border-border rounded-lg bg-background shadow-lg p-4 items-end flex flex-col">
+      <div className="mt-6 border border-border rounded-lg bg-background shadow-lg p-4 items-end flex flex-col  justify-between h-full ">
+      
         <ul className="w-full">
           {data?.body.employees.map((employee: Employee) => (
             <li key={employee.id} className="border-b py-4">
