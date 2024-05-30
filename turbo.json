@@ -4,7 +4,8 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "dotEnv": [".env.development.local", ".env.local", ".env.development", ".env"]
     },
     "lint": {
       "dependsOn": ["^lint"]
