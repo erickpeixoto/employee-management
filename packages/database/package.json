@@ -1,22 +1,20 @@
 {
   "name": "database",
   "version": "0.0.0",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": "./dist/index.js"
-  },
+  "module": "./dist/index.mjs",
   "scripts": {
-    "db:generate": "prisma generate dev",
-    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
-    "seed": "ts-node prisma/seed.ts",
-    "build": "tsc",
-    "dev": "ts-node prisma/seed.ts && tsc -w",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "build": "tsup index.ts --dts --format cjs",
+    "start": "tsup index.ts --dts --format cjs",
+    "dev": "tsup index.ts --dts --format cjs"
   },
   "dependencies": {
-    "@prisma/client": "latest"
+    "@prisma/client": "latest",
+    "tsup": "^8.0.2"
   },
   "devDependencies": {
     "prisma": "latest"

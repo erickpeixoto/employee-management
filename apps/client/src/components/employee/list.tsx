@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { Avatar, Button, Tooltip } from "@nextui-org/react";
 import { Trash2, EyeIcon } from "lucide-react";
-import { Employee, LIMIT_DEFAULT } from "ts-contract";
+import { LIMIT_DEFAULT, Employee  } from "ts-contract";
 import { Pagination } from "@/components/employee/pagination";
 import { apiClientQuery } from "ts-contract";
 import { formatHireDate } from "@/utils";

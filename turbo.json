@@ -43,6 +43,10 @@
     },
     "studio": {
       "cache": false
+    },
+    "start": {
+      "cache": false,
+      "dependsOn": ["^db:generate", "^db:push"]
     }
-  }
+  } 
 }

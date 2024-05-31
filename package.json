@@ -2,7 +2,7 @@
   "name": "@boilerplate/monorepo",
   "private": true,
   "scripts": {
-    "build": "turbo build",
+    "build": "turbo db:generate && turbo build",
     "dev": "turbo dev",
     "db:push": "turbo db:push",
     "db:generate": "turbo db:generate",
@@ -12,7 +12,8 @@
     "test": "turbo test",
     "test:e2e": "dotenv -e .env.test -- turbo run test:e2e",
     "test:cov": "turbo test",
-    "studio": "turbo studio"
+    "studio": "turbo studio",
+    "start": "turbo start"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

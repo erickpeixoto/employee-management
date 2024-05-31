@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Employee } from 'database';
+import { Employee } from 'ts-contract';
 
 @Injectable()
 export class EmployeeService {
@@ -68,7 +68,7 @@ export class EmployeeService {
 
     const response = await this.prisma.employee.update({
       where: { id: employee.id },
-      data: employee,
+      data: employee as any,
     });
 
     return response;

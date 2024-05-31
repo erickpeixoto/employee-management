@@ -4,7 +4,7 @@ import { resolve } from 'path';
 export default async () => {
 
   process.env.DATABASE_URL = 'file:./test.db';
-  const schemaPath = resolve(__dirname, '../../../packages/database/prisma/schema.prisma');
+  const schemaPath = resolve(__dirname, 'database/prisma/schema.prisma');
 
   try {
     execSync(`npx prisma migrate dev --name init --schema=${schemaPath}`, { stdio: 'inherit' });

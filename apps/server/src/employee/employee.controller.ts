@@ -8,7 +8,7 @@ import {
   paginationSchema,
   formattedErrors,
 } from 'ts-contract';
-import { Employee } from 'database';
+import { Employee } from 'ts-contract';
 import { TsRestHandler, tsRestHandler } from '@ts-rest/nest';
 import { ZodError } from 'zod';
 
@@ -20,6 +20,8 @@ export class EmployeeController {
   async handler() {
     return tsRestHandler(contract.employees, {
       getAll: async ({ query }) => {
+        console.log(query);
+        console.log("METHOD GET ALL");
         try {
           const validatedQuery = paginationSchema.parse(query);
           const { page, limit } = validatedQuery;
@@ -38,6 +40,7 @@ export class EmployeeController {
               body: { message: 'Bad request', errors: formattedErrors as any },
             };
           }
+          console.log(error);
           return { status: 500 as const, body: { message: 'Internal server error' } };
         }
       },
