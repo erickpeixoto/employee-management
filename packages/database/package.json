@@ -10,8 +10,9 @@
     "db:generate": "prisma generate dev",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push --skip-generate",
+    "seed": "ts-node prisma/seed.ts",
     "build": "tsc",
-    "dev": "ts-node ./src/index.ts",
+    "dev": "ts-node prisma/seed.ts && tsc -w",
     "studio": "prisma studio"
   },
   "dependencies": {

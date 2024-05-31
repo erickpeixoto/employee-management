@@ -7,15 +7,6 @@
     "src",
     "types"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist",
-      "node": "./dist",
-      "import": "./dist"
-     },
-    "./styles.css": "./dist/index.css"
-  },
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
