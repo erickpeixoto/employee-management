@@ -8,7 +8,7 @@ export function Navbar() {
         text-sm
         text-slate-500
         font-semibold
-      ">Hello, User</div>
+      ">user, button</div>
     </div>
   );
 }
